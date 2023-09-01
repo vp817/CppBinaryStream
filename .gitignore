@@ -1,0 +1,28 @@
+# Vscode
+.vscode/
+.vs/
+
+# CLion
+.idea/
+cmake-build-debug/
+cmake-build-release/
+cmake-build-debug-visual-studio/
+cmake-build-release-visual-studio/
+
+# CMake
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+
+# Windows
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.vcxproj.users
+*.sln
+*.dir/
+Debug/
+x64/
+
+# Makefile
+Makefile
