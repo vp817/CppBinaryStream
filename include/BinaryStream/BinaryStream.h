@@ -46,19 +46,13 @@ namespace Binary
 		/// \param[in] buffer The buffer to use.
 		/// \param[in] position The reading position.
 		explicit BinaryStream(Buffer *buffer, size_t position)
-			: buffer(buffer), position(position)
+			: buffer(buffer), position(position), currentOctet(0), bitCount(0)
 		{
-			this->currentOctet = 0;
-			this->bitCount = 0;
 		}
 
 		/// \brief Destructor for the BinaryStream class.
 		/// This deinitializes the buffer and resets the stream to its default state.
-		~BinaryStream()
-		{
-			delete this->buffer;
-			this->position = 0;
-		}
+		~BinaryStream();
 
 		/// \brief Rewinds the reading position
 		void rewind();

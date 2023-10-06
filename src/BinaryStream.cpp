@@ -17,6 +17,12 @@
 
 #include <BinaryStream/BinaryStream.h>
 
+Binary::BinaryStream::~BinaryStream()
+{
+	delete this->buffer;
+	this->position = 0;
+}
+
 void Binary::BinaryStream::rewind()
 {
 	this->position = 0;
