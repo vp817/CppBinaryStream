@@ -42,7 +42,7 @@ namespace Binary
 		size_t bitCount;
 
 	public:
-		// \brief Initializes a new instance of BinaryStream.
+		/// \brief Initializes a new instance of BinaryStream.
 		/// \param[in] buffer The buffer to use.
 		/// \param[in] position The reading position.
 		explicit BinaryStream(Buffer *buffer, size_t position)
