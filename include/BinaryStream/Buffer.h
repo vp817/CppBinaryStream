@@ -41,6 +41,7 @@ namespace Binary
 
 	public:
 		/// \brief Initializes a new Buffer instance.
+		///
 		/// \param[in] binary The binary data that will be used.
 		/// \param[in] size The size of the binary data (must be the same as the allocated binary size).
 		/// \param[in] position The writing position.
@@ -51,35 +52,36 @@ namespace Binary
 		}
 
 		/// \brief Allocates a zero-sized buffer with memory reallocation enabled.
+		///
 		/// \param[in] autoReallocationEnabled Specifies whether auto reallocation is enabled or not.
 		/// \return A Buffer object representing the allocated buffer.
 		static Buffer *allocateZero(bool autoReallocationEnabled = true);
 
 		/// \brief The destructor for the Buffer object, responsible for memory deallocation and resetting the buffer to its default state.
-		~Buffer()
-		{
-			delete[] this->binary;
-			this->size = -1;
-			this->position = -1;
-		}
+		~Buffer();
 
 		/// \brief Retrieves the current binary data.
+		///
 		/// \return A pointer to the uint8_t array representing the binary data.
 		uint8_t *getBinary();
 
 		/// \brief Retrieves the current size of the binary data.
+		///
 		/// \return The size of the binary data as a size_t value.
 		size_t getSize() const;
 
 		/// \brief Retrieves the current writing position in the binary data.
+		///
 		/// \return The writing position as a size_t value.
 		size_t getPosition() const;
 
 		/// \brief Checks if auto reallocation is enabled.
+		///
 		/// \return A boolean value indicating whether auto reallocation is enabled or not.
 		bool isAutoReallocationEnabled() const;
 
 		/// \brief Writes the binary data after the current binary data.
+		///
 		/// \param[in] binaryToAlign The binary data to be merged with the current binary data.
 		/// \param[in] alignSize The size of the binary data to be merged.
 		/// \throws std::invalid_argument if the buffer size or position is negative.
@@ -87,6 +89,7 @@ namespace Binary
 		void writeAligned(uint8_t *binaryToAlign, size_t alignSize);
 
 		/// \brief Retrieves a byte from a specific position in the buffer.
+		///
 		/// \param[in] pos The position to retrieve the byte from.
 		/// \return The byte value at the specified position.
 		/// \throws std::out_of_range error

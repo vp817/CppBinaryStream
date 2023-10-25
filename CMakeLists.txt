@@ -4,9 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 option(BINARY_STREAM_COMPILE_TESTS "compile the tests or not." OFF)
 
-file(GLOB LIB_FILES
-	src/*.cpp
-)
+file(GLOB_RECURSE LIB_FILES src/*.cpp)
 
 add_library(BinaryStream STATIC ${LIB_FILES})
 target_include_directories(BinaryStream PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

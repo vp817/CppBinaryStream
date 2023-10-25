@@ -17,6 +17,13 @@
 
 #include <BinaryStream/Buffer.h>
 
+Binary::Buffer::~Buffer()
+{
+	delete[] this->binary;
+	this->size = -1;
+	this->position = -1;
+}
+
 Binary::Buffer *Binary::Buffer::allocateZero(bool autoReallocationEnabled)
 {
 	return new Buffer(new uint8_t[0], 0, 0, autoReallocationEnabled);

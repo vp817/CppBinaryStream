@@ -31,12 +31,15 @@ namespace Binary::exceptions
 
 	public:
 		/// \brief Initializes a new VarIntTooBig error to be thrown.
+		///
 		/// \param[in] value The error message.
+		///
 		/// \throws VarIntTooBig error
 		explicit VarIntTooBig(std::string value) : message(std::string("[VarIntTooBig] ") + std::move(value)) {}
 		explicit VarIntTooBig(const char *value) : message(std::string("[VarIntTooBig] ") + value) {}
 
 		/// \brief Retrieves the error message as a string.
+		///
 		/// \return The error message as a std::string.
 		std::string getMessage()
 		{
@@ -44,6 +47,7 @@ namespace Binary::exceptions
 		}
 
 		/// \brief Retrieves the exception message to be displayed.
+		///
 		/// \return A const char* representing the exception message.
 		const char *what() const noexcept override
 		{
