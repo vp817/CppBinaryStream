@@ -18,10 +18,10 @@
 #pragma once
 
 #include <cstdint>
-#include "exceptions/EndOfStream.h"
+#include "exceptions/EndOfStream.hpp"
 #include <stdexcept>
 #include <cstdlib>
-#include <string>
+#include <cstring>
 
 namespace Binary
 {
@@ -46,10 +46,7 @@ namespace Binary
 		/// \param[in] size The size of the binary data (must be the same as the allocated binary size).
 		/// \param[in] position The writing position.
 		/// \param[in] autoReallocation Enables auto memory reallocation.
-		explicit Buffer(uint8_t *binary, size_t size, size_t position = 0, bool autoReallocation = false)
-			: binary(binary), size(size), position(position), autoReallocation(autoReallocation)
-		{
-		}
+		explicit Buffer(uint8_t *binary, size_t size, size_t position = 0, bool autoReallocation = false);
 
 		/// \brief Allocates a zero-sized buffer with memory reallocation enabled.
 		///

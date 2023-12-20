@@ -15,7 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <BinaryStream/Buffer.h>
+#include <BinaryStream/Buffer.hpp>
+
+Binary::Buffer::Buffer(uint8_t *binary, size_t size, size_t position, bool autoReallocation)
+	: binary(binary), size(size), position(position), autoReallocation(autoReallocation)
+{
+}
 
 Binary::Buffer::~Buffer()
 {
@@ -72,7 +77,7 @@ void Binary::Buffer::writeAligned(uint8_t *binaryToAlign, size_t alignSize)
 	}
 
 	this->position += alignSize;
-	memcpy(&this->binary[this->position - alignSize], binaryToAlign, alignSize);
+	std::memcpy(&this->binary[this->position - alignSize], binaryToAlign, alignSize);
 }
 
 uint8_t Binary::Buffer::at(size_t pos)

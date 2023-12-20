@@ -19,9 +19,9 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include "Buffer.h"
-#include "exceptions/EndOfStream.h"
-#include "exceptions/VarIntTooBig.h"
+#include "Buffer.hpp"
+#include "exceptions/EndOfStream.hpp"
+#include "exceptions/VarIntTooBig.hpp"
 
 namespace Binary
 {
@@ -40,10 +40,7 @@ namespace Binary
 		///
 		/// \param[in] buffer The buffer to use.
 		/// \param[in] position The reading position.
-		explicit BinaryStream(Buffer *buffer, size_t position)
-			: buffer(buffer), position(position), currentOctet(0), bitCount(0)
-		{
-		}
+		explicit BinaryStream(Buffer *buffer, size_t position);
 
 		/// \brief Destructor for the BinaryStream class.
 		/// This deinitializes the buffer and resets the stream to its default state.

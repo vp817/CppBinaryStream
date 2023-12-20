@@ -15,7 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <BinaryStream/BinaryStream.h>
+#include <BinaryStream/BinaryStream.hpp>
+
+Binary::BinaryStream::BinaryStream(Buffer *buffer, size_t position)
+	: buffer(buffer), position(position), currentOctet(0), bitCount(0)
+{
+}
 
 Binary::BinaryStream::~BinaryStream()
 {
