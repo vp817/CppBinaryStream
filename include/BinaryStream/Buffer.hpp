@@ -31,7 +31,7 @@ namespace Binary
 	{
 	protected:
 		/// \brief A pointer to a uint8_t array representing the binary data.
-		uint8_t *binary;
+		std::uint8_t *binary;
 		/// \brief The size of the binary data.
 		size_t size;
 		/// \brief The current position of the write head in the binary data buffer.
@@ -46,11 +46,12 @@ namespace Binary
 		/// \param[in] size The size of the binary data (must be the same as the allocated binary size).
 		/// \param[in] position The writing position.
 		/// \param[in] auto_reallocation Enables auto memory reallocation.
-		explicit Buffer(uint8_t *binary, size_t size, size_t position = 0, bool auto_reallocation = false);
+		explicit Buffer(std::uint8_t *binary, size_t size, size_t position = 0, bool auto_reallocation = false);
 
 		/// \brief Allocates a zero-sized buffer with memory reallocation enabled.
 		///
 		/// \param[in] auto_reallocationEnabled Specifies whether auto reallocation is enabled or not.
+		///
 		/// \return A Buffer object representing the allocated buffer.
 		static Buffer *allocateZero(bool auto_reallocation_enabled = true);
 
@@ -59,8 +60,8 @@ namespace Binary
 
 		/// \brief Retrieves the current binary data.
 		///
-		/// \return A pointer to the uint8_t array representing the binary data.
-		uint8_t *getBinary();
+		/// \return A pointer to the uint8 array representing the binary data.
+		std::uint8_t *getBinary();
 
 		/// \brief Retrieves the current size of the binary data.
 		///
@@ -81,15 +82,16 @@ namespace Binary
 		///
 		/// \param[in] binary_to_align The binary data to be merged with the current binary data.
 		/// \param[in] align_size The size of the binary data to be merged.
+		//
 		/// \throws std::invalid_argument if the buffer size or position is negative.
 		/// \throws Binary::exceptions::EndOfStream if the buffer is at maximum size and auto reallocation is not enabled.
-		void writeAligned(uint8_t *binary_to_align, size_t align_size);
+		void writeAligned(std::uint8_t *binary_to_align, size_t align_size);
 
 		/// \brief Retrieves a byte from a specific position in the buffer.
 		///
 		/// \param[in] pos The position to retrieve the byte from.
 		/// \return The byte value at the specified position.
 		/// \throws std::out_of_range error
-		uint8_t at(size_t pos);
+		std::uint8_t at(size_t pos);
 	};
 }

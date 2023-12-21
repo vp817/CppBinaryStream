@@ -32,7 +32,7 @@ namespace Binary
 	protected:
 		Buffer *buffer;
 		size_t position;
-		uint8_t current_octet;
+		std::uint8_t current_octet;
 		size_t bit_count;
 
 	public:
@@ -99,12 +99,12 @@ namespace Binary
 		/// \brief Writes a uint8 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		void writeUInt8(uint8_t value);
+		void writeUInt8(std::uint8_t value);
 
 		/// \brief Writes an int8 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		void writeInt8(int8_t value);
+		void writeInt8(std::int8_t value);
 
 		/// \brief Writes a boolean value to the buffer.
 		///
@@ -135,49 +135,49 @@ namespace Binary
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeUInt16(uint16_t value, bool big_endian = true);
+		void writeUInt16(std::uint16_t value, bool big_endian = true);
 
 		/// \brief Writes an int16 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeInt16(int16_t value, bool big_endian = true);
+		void writeInt16(std::int16_t value, bool big_endian = true);
 
 		/// \brief Writes a uint24 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeUInt24(uint32_t value, bool big_endian = true);
+		void writeUInt24(std::uint32_t value, bool big_endian = true);
 
 		/// \brief Writes an int24 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeInt24(int32_t value, bool big_endian = true);
+		void writeInt24(std::int32_t value, bool big_endian = true);
 
 		/// \brief Writes a uint32 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeUInt32(uint32_t value, bool big_endian = true);
+		void writeUInt32(std::uint32_t value, bool big_endian = true);
 
 		/// \brief Writes an int32 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeInt32(int32_t value, bool big_endian = true);
+		void writeInt32(std::int32_t value, bool big_endian = true);
 
 		/// \brief Writes a uint64 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeUInt64(uint64_t value, bool big_endian = true);
+		void writeUInt64(std::uint64_t value, bool big_endian = true);
 
 		/// \brief Writes an int64 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
-		void writeInt64(int64_t value, bool big_endian = true);
+		void writeInt64(std::int64_t value, bool big_endian = true);
 
 		/// \brief Writes a float value to the buffer.
 		///
@@ -194,32 +194,32 @@ namespace Binary
 		/// \brief Writes a varint32 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		void writeVarInt32(uint32_t value);
+		void writeVarInt32(std::uint32_t value);
 
 		/// \brief Writes a varint64 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		void writeVarInt64(uint64_t value);
+		void writeVarInt64(std::uint64_t value);
 
 		/// \brief Writes a zigzag32 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		void writeZigZag32(int32_t value);
+		void writeZigZag32(std::int32_t value);
 
 		/// \brief Writes a zigzag64 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		void writeZigZag64(int64_t value);
+		void writeZigZag64(std::int64_t value);
 
 		/// \brief Reads a uint8 value from the buffer.
 		///
 		/// \return The uint8 value read from the buffer.
-		uint8_t readUInt8();
+		std::uint8_t readUInt8();
 
 		/// \brief Reads an int8 value from the buffer.
 		///
 		/// \return The int8 value read from the buffer.
-		int8_t readInt8();
+		std::int8_t readInt8();
 
 		/// \brief Reads a boolean value from the buffer.
 		///
@@ -229,6 +229,7 @@ namespace Binary
 		/// \brief Reads a bit from the buffer.
 		///
 		/// \param[in] skip Whether to skip to a new octet without waiting until the bit is completely read.
+		///
 		/// \return The boolean value of the bit read from the buffer.
 		bool readBit(bool skip = false);
 
@@ -236,6 +237,7 @@ namespace Binary
 		///
 		/// \param[in] size The number of bits to read.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		///
 		/// \return The value read from the buffer as type T.
 		template <typename T>
 		T readBits(T size, bool big_endian = true)
@@ -244,7 +246,7 @@ namespace Binary
 
 			for (size_t i = 0; i < size; ++i)
 			{
-				result |= static_cast<uint8_t>(this->readBit()) << (big_endian ? (size - i - 1) : i);
+				result |= static_cast<std::uint8_t>(this->readBit()) << (big_endian ? (size - i - 1) : i);
 			}
 
 			return result;
@@ -255,56 +257,56 @@ namespace Binary
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint16 value read from the buffer.
-		uint16_t readUInt16(bool big_endian = true);
+		std::uint16_t readUInt16(bool big_endian = true);
 
 		/// \brief Reads an int16 value from the buffer.
 		///
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int16 value read from the buffer.
-		int16_t readInt16(bool big_endian = true);
+		std::int16_t readInt16(bool big_endian = true);
 
 		/// \brief Reads a uint24 value from the buffer.
 		///
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint32 value read from the buffer, limited to the range of uint24.
-		uint32_t readUInt24(bool big_endian = true);
+		std::uint32_t readUInt24(bool big_endian = true);
 
 		/// \brief Reads an int24 value from the buffer.
 		///
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int32 value read from the buffer, limited to the range of int24.
-		int32_t readInt24(bool big_endian = true);
+		std::int32_t readInt24(bool big_endian = true);
 
 		/// \brief Reads a uint32 value from the buffer.
 		///
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint32 value read from the buffer.
-		uint32_t readUInt32(bool big_endian = true);
+		std::uint32_t readUInt32(bool big_endian = true);
 
 		/// \brief Reads an int32 value from the buffer.
 		///
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int32 value read from the buffer.
-		int32_t readInt32(bool big_endian = true);
+		std::int32_t readInt32(bool big_endian = true);
 
 		/// \brief Reads a uint64 value from the buffer.
 		///
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint64 value read from the buffer.
-		uint64_t readUInt64(bool big_endian = true);
+		std::uint64_t readUInt64(bool big_endian = true);
 
 		/// \brief Reads an int64 value from the buffer.
 		///
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int64 value read from the buffer.
-		int64_t readInt64(bool big_endian = true);
+		std::int64_t readInt64(bool big_endian = true);
 
 		/// \brief Reads a float value from the buffer.
 		///
@@ -320,30 +322,29 @@ namespace Binary
 		/// \return The double value read from the buffer.
 		double readDouble(bool big_endian = true);
 
-		/// \brief Reads a varint32 value from the buffer and returns a uint32_t.
+		/// \brief Reads a varint32 value from the buffer and returns a uint32.
 		///
-		/// \return The uint32_t value read from the buffer.
-		///
+		/// \return The uint32 value read from the buffer.
 		/// \throws VarIntTooBig error
-		uint32_t readVarInt32();
+		std::uint32_t readVarInt32();
 
-		/// \brief Reads a varint64 value from the buffer and returns a uint64_t.
+		/// \brief Reads a varint64 value from the buffer and returns a uint64.
 		///
-		/// \return The uint64_t value read from the buffer.
+		/// \return The uint64 value read from the buffer.
 		/// \throws VarIntTooBig error
-		uint64_t readVarInt64();
+		std::uint64_t readVarInt64();
 
-		/// \brief Reads a zigzag32 value from the buffer and returns an int32_t.
+		/// \brief Reads a zigzag32 value from the buffer and returns an int32.
 		///
-		/// \return The int32_t value read from the buffer.
+		/// \return int32 value read from the buffer.
 		/// \throws VarIntTooBig error
-		int32_t readZigZag32();
+		std::int32_t readZigZag32();
 
-		/// \brief Reads a zigzag64 value from the buffer and returns an int64_t.
+		/// \brief Reads a zigzag64 value from the buffer and returns an int64.
 		///
-		/// \return The int64_t value read from the buffer.
+		/// \return The int64 value read from the buffer.
 		/// \throws VarIntTooBig error
-		int64_t readZigZag64();
+		std::int64_t readZigZag64();
 
 		/// \brief Reads the remaining buffer.
 		///
