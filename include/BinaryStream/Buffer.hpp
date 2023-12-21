@@ -37,7 +37,7 @@ namespace Binary
 		/// \brief The current position of the write head in the binary data buffer.
 		size_t position;
 		/// \brief Whether automatic reallocation of the binary data buffer is enabled.
-		bool autoReallocation;
+		bool auto_reallocation;
 
 	public:
 		/// \brief Initializes a new Buffer instance.
@@ -45,14 +45,14 @@ namespace Binary
 		/// \param[in] binary The binary data that will be used.
 		/// \param[in] size The size of the binary data (must be the same as the allocated binary size).
 		/// \param[in] position The writing position.
-		/// \param[in] autoReallocation Enables auto memory reallocation.
-		explicit Buffer(uint8_t *binary, size_t size, size_t position = 0, bool autoReallocation = false);
+		/// \param[in] auto_reallocation Enables auto memory reallocation.
+		explicit Buffer(uint8_t *binary, size_t size, size_t position = 0, bool auto_reallocation = false);
 
 		/// \brief Allocates a zero-sized buffer with memory reallocation enabled.
 		///
-		/// \param[in] autoReallocationEnabled Specifies whether auto reallocation is enabled or not.
+		/// \param[in] auto_reallocationEnabled Specifies whether auto reallocation is enabled or not.
 		/// \return A Buffer object representing the allocated buffer.
-		static Buffer *allocateZero(bool autoReallocationEnabled = true);
+		static Buffer *allocateZero(bool auto_reallocation_enabled = true);
 
 		/// \brief The destructor for the Buffer object, responsible for memory deallocation and resetting the buffer to its default state.
 		~Buffer();
@@ -79,11 +79,11 @@ namespace Binary
 
 		/// \brief Writes the binary data after the current binary data.
 		///
-		/// \param[in] binaryToAlign The binary data to be merged with the current binary data.
-		/// \param[in] alignSize The size of the binary data to be merged.
+		/// \param[in] binary_to_align The binary data to be merged with the current binary data.
+		/// \param[in] align_size The size of the binary data to be merged.
 		/// \throws std::invalid_argument if the buffer size or position is negative.
 		/// \throws Binary::exceptions::EndOfStream if the buffer is at maximum size and auto reallocation is not enabled.
-		void writeAligned(uint8_t *binaryToAlign, size_t alignSize);
+		void writeAligned(uint8_t *binary_to_align, size_t align_size);
 
 		/// \brief Retrieves a byte from a specific position in the buffer.
 		///

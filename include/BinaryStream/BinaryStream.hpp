@@ -32,8 +32,8 @@ namespace Binary
 	protected:
 		Buffer *buffer;
 		size_t position;
-		uint8_t currentOctet;
-		size_t bitCount;
+		uint8_t current_octet;
+		size_t bit_count;
 
 	public:
 		/// \brief Initializes a new instance of BinaryStream class.
@@ -51,8 +51,8 @@ namespace Binary
 
 		/// \brief Resets the buffer with a new allocated buffer.
 		///
-		/// \param[in] autoReallocation Enable automatic reallocation for the new buffer.
-		void reset(bool autoReallocation = false);
+		/// \param[in] auto_reallocation Enable automatic reallocation for the new buffer.
+		void reset(bool auto_reallocation = false);
 
 		/// \brief Checks if the stream has reached the end of the stream.
 		///
@@ -121,75 +121,75 @@ namespace Binary
 		///
 		/// \param[in] value The value to write.
 		/// \param[in] size The number of bits to write.
-		/// \param[in] bigEndian Specifies whether to use big endian bit order.
+		/// \param[in] big_endian Specifies whether to use big endian bit order.
 		template <typename T>
-		void writeBits(T value, int size, bool bigEndian = true)
+		void writeBits(T value, int size, bool big_endian = true)
 		{
 			for (size_t i = 0; i < size; ++i)
 			{
-				this->writeBit(((value >> (bigEndian ? (size - i - 1) : i)) & 1) == 1);
+				this->writeBit(((value >> (big_endian ? (size - i - 1) : i)) & 1) == 1);
 			}
 		}
 
 		/// \brief Writes a uint16 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeUInt16(uint16_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeUInt16(uint16_t value, bool big_endian = true);
 
 		/// \brief Writes an int16 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeInt16(int16_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeInt16(int16_t value, bool big_endian = true);
 
 		/// \brief Writes a uint24 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeUInt24(uint32_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeUInt24(uint32_t value, bool big_endian = true);
 
 		/// \brief Writes an int24 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeInt24(int32_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeInt24(int32_t value, bool big_endian = true);
 
 		/// \brief Writes a uint32 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeUInt32(uint32_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeUInt32(uint32_t value, bool big_endian = true);
 
 		/// \brief Writes an int32 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeInt32(int32_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeInt32(int32_t value, bool big_endian = true);
 
 		/// \brief Writes a uint64 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeUInt64(uint64_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeUInt64(uint64_t value, bool big_endian = true);
 
 		/// \brief Writes an int64 value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeInt64(int64_t value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeInt64(int64_t value, bool big_endian = true);
 
 		/// \brief Writes a float value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeFloat(float value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeFloat(float value, bool big_endian = true);
 
 		/// \brief Writes a double value to the buffer.
 		///
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
-		void writeDouble(double value, bool bigEndian = true);
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		void writeDouble(double value, bool big_endian = true);
 
 		/// \brief Writes a varint32 value to the buffer.
 		///
@@ -235,16 +235,16 @@ namespace Binary
 		/// \brief Reads bits from the buffer.
 		///
 		/// \param[in] size The number of bits to read.
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		/// \return The value read from the buffer as type T.
 		template <typename T>
-		T readBits(T size, bool bigEndian = true)
+		T readBits(T size, bool big_endian = true)
 		{
 			T result = 0;
 
 			for (size_t i = 0; i < size; ++i)
 			{
-				result |= static_cast<uint8_t>(this->readBit()) << (bigEndian ? (size - i - 1) : i);
+				result |= static_cast<uint8_t>(this->readBit()) << (big_endian ? (size - i - 1) : i);
 			}
 
 			return result;
@@ -252,73 +252,73 @@ namespace Binary
 
 		/// \brief Reads a uint16 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint16 value read from the buffer.
-		uint16_t readUInt16(bool bigEndian = true);
+		uint16_t readUInt16(bool big_endian = true);
 
 		/// \brief Reads an int16 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int16 value read from the buffer.
-		int16_t readInt16(bool bigEndian = true);
+		int16_t readInt16(bool big_endian = true);
 
 		/// \brief Reads a uint24 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint32 value read from the buffer, limited to the range of uint24.
-		uint32_t readUInt24(bool bigEndian = true);
+		uint32_t readUInt24(bool big_endian = true);
 
 		/// \brief Reads an int24 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int32 value read from the buffer, limited to the range of int24.
-		int32_t readInt24(bool bigEndian = true);
+		int32_t readInt24(bool big_endian = true);
 
 		/// \brief Reads a uint32 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint32 value read from the buffer.
-		uint32_t readUInt32(bool bigEndian = true);
+		uint32_t readUInt32(bool big_endian = true);
 
 		/// \brief Reads an int32 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int32 value read from the buffer.
-		int32_t readInt32(bool bigEndian = true);
+		int32_t readInt32(bool big_endian = true);
 
 		/// \brief Reads a uint64 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The uint64 value read from the buffer.
-		uint64_t readUInt64(bool bigEndian = true);
+		uint64_t readUInt64(bool big_endian = true);
 
 		/// \brief Reads an int64 value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The int64 value read from the buffer.
-		int64_t readInt64(bool bigEndian = true);
+		int64_t readInt64(bool big_endian = true);
 
 		/// \brief Reads a float value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The float value read from the buffer.
-		float readFloat(bool bigEndian = true);
+		float readFloat(bool big_endian = true);
 
 		/// \brief Reads a double value from the buffer.
 		///
-		/// \param[in] bigEndian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
 		/// \return The double value read from the buffer.
-		double readDouble(bool bigEndian = true);
+		double readDouble(bool big_endian = true);
 
 		/// \brief Reads a varint32 value from the buffer and returns a uint32_t.
 		///

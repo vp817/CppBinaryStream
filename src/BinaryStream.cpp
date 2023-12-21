@@ -18,7 +18,7 @@
 #include <BinaryStream/BinaryStream.hpp>
 
 Binary::BinaryStream::BinaryStream(Buffer *buffer, size_t position)
-	: buffer(buffer), position(position), currentOctet(0), bitCount(0)
+	: buffer(buffer), position(position), current_octet(0), bit_count(0)
 {
 }
 
@@ -33,10 +33,10 @@ void Binary::BinaryStream::rewind()
 	this->position = 0;
 }
 
-void Binary::BinaryStream::reset(bool autoReallocation)
+void Binary::BinaryStream::reset(bool auto_reallocation)
 {
 	delete this->buffer;
-	this->buffer = Buffer::allocateZero(autoReallocation);
+	this->buffer = Buffer::allocateZero(auto_reallocation);
 	this->rewind();
 }
 
@@ -61,10 +61,10 @@ void Binary::BinaryStream::padBufferWithZero(size_t size)
 
 void Binary::BinaryStream::nullifyBit()
 {
-	if (this->currentOctet != 0 && this->bitCount != 0)
+	if (this->current_octet != 0 && this->bit_count != 0)
 	{
-		this->currentOctet = 0;
-		this->bitCount = 0;
+		this->current_octet = 0;
+		this->bit_count = 0;
 	}
 }
 
@@ -115,26 +115,26 @@ void Binary::BinaryStream::writeBool(bool value)
 
 void Binary::BinaryStream::writeBit(bool value, bool skip)
 {
-	if (this->currentOctet != 0 && this->bitCount == 0)
+	if (this->current_octet != 0 && this->bit_count == 0)
 	{
-		this->currentOctet = 0;
+		this->current_octet = 0;
 	}
 
-	this->currentOctet |= static_cast<uint8_t>(value) << (7 - this->bitCount++);
+	this->current_octet |= static_cast<uint8_t>(value) << (7 - this->bit_count++);
 
-	if (this->bitCount == 8 || skip)
+	if (this->bit_count == 8 || skip)
 	{
-		this->writeUInt8(this->currentOctet);
-		this->currentOctet = 0;
-		this->bitCount = 0;
+		this->writeUInt8(this->current_octet);
+		this->current_octet = 0;
+		this->bit_count = 0;
 	}
 }
 
-void Binary::BinaryStream::writeUInt16(uint16_t value, bool bigEndian)
+void Binary::BinaryStream::writeUInt16(uint16_t value, bool big_endian)
 {
 	uint8_t bytes[2] = {0};
 
-	if (bigEndian)
+	if (big_endian)
 	{
 		bytes[0] = static_cast<uint8_t>(value >> 8);
 		bytes[1] = static_cast<uint8_t>(value);
@@ -148,16 +148,16 @@ void Binary::BinaryStream::writeUInt16(uint16_t value, bool bigEndian)
 	this->buffer->writeAligned(bytes, 2);
 }
 
-void Binary::BinaryStream::writeInt16(int16_t value, bool bigEndian)
+void Binary::BinaryStream::writeInt16(int16_t value, bool big_endian)
 {
-	this->writeUInt16(static_cast<uint16_t>(value), bigEndian);
+	this->writeUInt16(static_cast<uint16_t>(value), big_endian);
 }
 
-void Binary::BinaryStream::writeUInt24(uint32_t value, bool bigEndian)
+void Binary::BinaryStream::writeUInt24(uint32_t value, bool big_endian)
 {
 	uint8_t bytes[3] = {0};
 
-	if (bigEndian)
+	if (big_endian)
 	{
 		bytes[0] = static_cast<uint8_t>(value >> 16);
 		bytes[1] = static_cast<uint8_t>(value >> 8);
@@ -173,18 +173,18 @@ void Binary::BinaryStream::writeUInt24(uint32_t value, bool bigEndian)
 	this->buffer->writeAligned(bytes, 3);
 }
 
-void Binary::BinaryStream::writeInt24(int32_t value, bool bigEndian)
+void Binary::BinaryStream::writeInt24(int32_t value, bool big_endian)
 {
 	this->writeUInt24(static_cast<uint32_t>(value < 0x7fffff ? 0x800000 + value : value > 0x7fffff ? value - 0x800000
 																								   : value),
-					  bigEndian);
+					  big_endian);
 }
 
-void Binary::BinaryStream::writeUInt32(uint32_t value, bool bigEndian)
+void Binary::BinaryStream::writeUInt32(uint32_t value, bool big_endian)
 {
 	uint8_t bytes[4] = {0};
 
-	if (bigEndian)
+	if (big_endian)
 	{
 		bytes[0] = static_cast<uint8_t>(value >> 24);
 		bytes[1] = static_cast<uint8_t>(value >> 16);
@@ -202,16 +202,16 @@ void Binary::BinaryStream::writeUInt32(uint32_t value, bool bigEndian)
 	this->buffer->writeAligned(bytes, 4);
 }
 
-void Binary::BinaryStream::writeInt32(int32_t value, bool bigEndian)
+void Binary::BinaryStream::writeInt32(int32_t value, bool big_endian)
 {
-	this->writeUInt32(static_cast<uint32_t>(value), bigEndian);
+	this->writeUInt32(static_cast<uint32_t>(value), big_endian);
 }
 
-void Binary::BinaryStream::writeUInt64(uint64_t value, bool bigEndian)
+void Binary::BinaryStream::writeUInt64(uint64_t value, bool big_endian)
 {
 	uint8_t bytes[8] = {0};
 
-	if (bigEndian)
+	if (big_endian)
 	{
 		bytes[0] = static_cast<uint8_t>(value >> 56);
 		bytes[1] = static_cast<uint8_t>(value >> 48);
@@ -237,38 +237,38 @@ void Binary::BinaryStream::writeUInt64(uint64_t value, bool bigEndian)
 	this->buffer->writeAligned(bytes, 8);
 }
 
-void Binary::BinaryStream::writeInt64(int64_t value, bool bigEndian)
+void Binary::BinaryStream::writeInt64(int64_t value, bool big_endian)
 {
-	this->writeUInt64(static_cast<uint64_t>(value), bigEndian);
+	this->writeUInt64(static_cast<uint64_t>(value), big_endian);
 }
 
-void Binary::BinaryStream::writeFloat(float value, bool bigEndian)
+void Binary::BinaryStream::writeFloat(float value, bool big_endian)
 {
 	uint32_t bitPattern = *reinterpret_cast<uint32_t *>(&value);
-	this->writeUInt32(bitPattern, bigEndian);
+	this->writeUInt32(bitPattern, big_endian);
 }
 
-void Binary::BinaryStream::writeDouble(double value, bool bigEndian)
+void Binary::BinaryStream::writeDouble(double value, bool big_endian)
 {
 	uint64_t bitPattern = *reinterpret_cast<uint64_t *>(&value);
-	this->writeUInt64(bitPattern, bigEndian);
+	this->writeUInt64(bitPattern, big_endian);
 }
 
 void Binary::BinaryStream::writeVarInt32(uint32_t value)
 {
 	for (size_t i = 0; i < 5; ++i)
 	{
-		uint8_t toWrite = value & 0x7f;
+		uint8_t to_write = value & 0x7f;
 
 		value >>= 7;
 
 		if (value != 0)
 		{
-			this->writeUInt8(toWrite | 0x80);
+			this->writeUInt8(to_write | 0x80);
 		}
 		else
 		{
-			this->writeUInt8(toWrite);
+			this->writeUInt8(to_write);
 			break;
 		}
 	}
@@ -278,17 +278,17 @@ void Binary::BinaryStream::writeVarInt64(uint64_t value)
 {
 	for (size_t i = 0; i < 10; ++i)
 	{
-		uint8_t toWrite = value & 0x7f;
+		uint8_t to_write = value & 0x7f;
 
 		value >>= 7;
 
 		if (value != 0)
 		{
-			this->writeUInt8(toWrite | 0x80);
+			this->writeUInt8(to_write | 0x80);
 		}
 		else
 		{
-			this->writeUInt8(toWrite);
+			this->writeUInt8(to_write);
 			break;
 		}
 	}
@@ -296,14 +296,16 @@ void Binary::BinaryStream::writeVarInt64(uint64_t value)
 
 void Binary::BinaryStream::writeZigZag32(int32_t value)
 {
-	auto toWrite = static_cast<uint32_t>(value);
-	this->writeVarInt32((toWrite << 1) ^ (toWrite >> 31));
+	auto to_write = static_cast<uint32_t>(value);
+
+	this->writeVarInt32((to_write << 1) ^ (to_write >> 31));
 }
 
 void Binary::BinaryStream::writeZigZag64(int64_t value)
 {
-	auto toWrite = static_cast<uint64_t>(value);
-	this->writeVarInt64((toWrite << 1) ^ (toWrite >> 63));
+	auto to_write = static_cast<uint64_t>(value);
+
+	this->writeVarInt64((to_write << 1) ^ (to_write >> 63));
 }
 
 uint8_t Binary::BinaryStream::readUInt8()
@@ -323,25 +325,25 @@ bool Binary::BinaryStream::readBool()
 
 bool Binary::BinaryStream::readBit(bool skip)
 {
-	if (this->currentOctet != 0 && this->bitCount == 0)
+	if (this->current_octet != 0 && this->bit_count == 0)
 	{
-		this->currentOctet = 0;
+		this->current_octet = 0;
 	}
 
-	if (this->bitCount == 0 || skip)
+	if (this->bit_count == 0 || skip)
 	{
-		this->currentOctet = this->readUInt8();
-		this->bitCount = 8;
+		this->current_octet = this->readUInt8();
+		this->bit_count = 8;
 	}
 
-	return (this->currentOctet & (1 << (--this->bitCount))) != 0;
+	return (this->current_octet & (1 << (--this->bit_count))) != 0;
 }
 
-uint16_t Binary::BinaryStream::readUInt16(bool bigEndian)
+uint16_t Binary::BinaryStream::readUInt16(bool big_endian)
 {
 	Buffer *binary = this->readAligned(2);
 
-	return bigEndian
+	return big_endian
 			   ? (
 					 static_cast<uint16_t>(binary->at(0) << 8) |
 					 static_cast<uint16_t>(binary->at(1)))
@@ -350,16 +352,16 @@ uint16_t Binary::BinaryStream::readUInt16(bool bigEndian)
 					 static_cast<uint16_t>(binary->at(1) << 8));
 }
 
-int16_t Binary::BinaryStream::readInt16(bool bigEndian)
+int16_t Binary::BinaryStream::readInt16(bool big_endian)
 {
-	return static_cast<int16_t>(this->readUInt16(bigEndian));
+	return static_cast<int16_t>(this->readUInt16(big_endian));
 }
 
-uint32_t Binary::BinaryStream::readUInt24(bool bigEndian)
+uint32_t Binary::BinaryStream::readUInt24(bool big_endian)
 {
 	Buffer *binary = this->readAligned(3);
 
-	return bigEndian
+	return big_endian
 			   ? (
 					 static_cast<uint32_t>(binary->at(0) << 16) |
 					 static_cast<uint32_t>(binary->at(1) << 8) |
@@ -372,19 +374,19 @@ uint32_t Binary::BinaryStream::readUInt24(bool bigEndian)
 					 0xffffff;
 }
 
-int32_t Binary::BinaryStream::readInt24(bool bigEndian)
+int32_t Binary::BinaryStream::readInt24(bool big_endian)
 {
-	auto result = static_cast<int32_t>(this->readUInt24(bigEndian));
+	auto result = static_cast<int32_t>(this->readUInt24(big_endian));
 
 	return result < 0x7fffff ? 0x800000 + result : result > 0x7fffff ? result - 0x800000
 																	 : result;
 }
 
-uint32_t Binary::BinaryStream::readUInt32(bool bigEndian)
+uint32_t Binary::BinaryStream::readUInt32(bool big_endian)
 {
 	Buffer *binary = this->readAligned(4);
 
-	return bigEndian
+	return big_endian
 			   ? (
 					 static_cast<uint32_t>(binary->at(0)) << 24 |
 					 static_cast<uint32_t>(binary->at(1) << 16) |
@@ -397,16 +399,16 @@ uint32_t Binary::BinaryStream::readUInt32(bool bigEndian)
 					 static_cast<uint32_t>(binary->at(3) << 24));
 }
 
-int32_t Binary::BinaryStream::readInt32(bool bigEndian)
+int32_t Binary::BinaryStream::readInt32(bool big_endian)
 {
-	return static_cast<int32_t>(this->readUInt32(bigEndian));
+	return static_cast<int32_t>(this->readUInt32(big_endian));
 }
 
-uint64_t Binary::BinaryStream::readUInt64(bool bigEndian)
+uint64_t Binary::BinaryStream::readUInt64(bool big_endian)
 {
 	Buffer *binary = this->readAligned(8);
 
-	return bigEndian
+	return big_endian
 			   ? (static_cast<uint64_t>(binary->at(0)) << 56 |
 				  static_cast<uint64_t>(binary->at(1)) << 48 |
 				  static_cast<uint64_t>(binary->at(2)) << 40 |
@@ -425,21 +427,23 @@ uint64_t Binary::BinaryStream::readUInt64(bool bigEndian)
 				  static_cast<uint64_t>(binary->at(7)) << 56);
 }
 
-int64_t Binary::BinaryStream::readInt64(bool bigEndian)
+int64_t Binary::BinaryStream::readInt64(bool big_endian)
 {
-	return static_cast<int64_t>(this->readUInt64(bigEndian));
+	return static_cast<int64_t>(this->readUInt64(big_endian));
 }
 
-float Binary::BinaryStream::readFloat(bool bigEndian)
+float Binary::BinaryStream::readFloat(bool big_endian)
 {
-	uint32_t bitPattern = this->readUInt32(bigEndian);
-	return *reinterpret_cast<float *>(&bitPattern);
+	uint32_t bit_pattern = this->readUInt32(big_endian);
+
+	return *reinterpret_cast<float *>(&bit_pattern);
 }
 
-double Binary::BinaryStream::readDouble(bool bigEndian)
+double Binary::BinaryStream::readDouble(bool big_endian)
 {
-	uint64_t bitPattern = this->readUInt64(bigEndian);
-	return *reinterpret_cast<double *>(&bitPattern);
+	uint64_t bit_pattern = this->readUInt64(big_endian);
+
+	return *reinterpret_cast<double *>(&bit_pattern);
 }
 
 uint32_t Binary::BinaryStream::readVarInt32()
@@ -448,11 +452,11 @@ uint32_t Binary::BinaryStream::readVarInt32()
 
 	for (size_t i = 0; i < 35; i += 7)
 	{
-		uint8_t toRead = this->readUInt8();
+		uint8_t to_read = this->readUInt8();
 
-		value |= (toRead & 0x7f) << i;
+		value |= (to_read & 0x7f) << i;
 
-		if ((toRead & 0x80) == 0)
+		if ((to_read & 0x80) == 0)
 		{
 			return value;
 		}
@@ -467,11 +471,11 @@ uint64_t Binary::BinaryStream::readVarInt64()
 
 	for (size_t i = 0; i < 70; i += 7)
 	{
-		uint8_t toRead = this->readUInt8();
+		uint8_t to_read = this->readUInt8();
 
-		value |= (toRead & 0x7f) << i;
+		value |= (to_read & 0x7f) << i;
 
-		if ((toRead & 0x80) == 0)
+		if ((to_read & 0x80) == 0)
 		{
 			return value;
 		}

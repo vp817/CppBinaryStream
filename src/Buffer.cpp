@@ -17,8 +17,8 @@
 
 #include <BinaryStream/Buffer.hpp>
 
-Binary::Buffer::Buffer(uint8_t *binary, size_t size, size_t position, bool autoReallocation)
-	: binary(binary), size(size), position(position), autoReallocation(autoReallocation)
+Binary::Buffer::Buffer(uint8_t *binary, size_t size, size_t position, bool auto_reallocation)
+	: binary(binary), size(size), position(position), auto_reallocation(auto_reallocation)
 {
 }
 
@@ -29,9 +29,9 @@ Binary::Buffer::~Buffer()
 	this->position = -1;
 }
 
-Binary::Buffer *Binary::Buffer::allocateZero(bool autoReallocationEnabled)
+Binary::Buffer *Binary::Buffer::allocateZero(bool auto_reallocation_enabled)
 {
-	return new Buffer(new uint8_t[0], 0, 0, autoReallocationEnabled);
+	return new Buffer(new uint8_t[0], 0, 0, auto_reallocation_enabled);
 }
 
 uint8_t *Binary::Buffer::getBinary()
@@ -51,33 +51,33 @@ size_t Binary::Buffer::getPosition() const
 
 bool Binary::Buffer::isAutoReallocationEnabled() const
 {
-	return this->autoReallocation;
+	return this->auto_reallocation;
 }
 
-void Binary::Buffer::writeAligned(uint8_t *binaryToAlign, size_t alignSize)
+void Binary::Buffer::writeAligned(uint8_t *binary_to_align, size_t align_size)
 {
-	size_t newSize = this->size + alignSize;
+	size_t new_size = this->size + align_size;
 
 	if (this->size < 0 || this->position < 0)
 	{
 		throw std::invalid_argument("Buffer size and position must not be negative, but got size = " + std::to_string(this->size) + ", position = " + std::to_string(this->position));
 	}
 
-	if (newSize > this->size || this->position > this->size)
+	if (new_size > this->size || this->position > this->size)
 	{
-		if (this->autoReallocation)
+		if (this->auto_reallocation)
 		{
-			this->size = newSize;
+			this->size = new_size;
 			this->binary = static_cast<uint8_t *>(realloc(this->binary, this->size));
 		}
-		else if (!this->autoReallocation)
+		else if (!this->auto_reallocation)
 		{
 			throw exceptions::EndOfStream("Attempted to write to buffer at position " + std::to_string(this->position) + ", but buffer is at maximum size.");
 		}
 	}
 
-	this->position += alignSize;
-	std::memcpy(&this->binary[this->position - alignSize], binaryToAlign, alignSize);
+	this->position += align_size;
+	std::memcpy(&this->binary[this->position - align_size], binary_to_align, align_size);
 }
 
 uint8_t Binary::Buffer::at(size_t pos)
