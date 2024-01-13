@@ -21,20 +21,19 @@
 
 namespace Binary::exceptions
 {
-	class VarIntTooBig : public std::exception
+	class PaddingOutOfRange : public std::exception
 	{
 	private:
 		/// \brief The error message associated with the exception.
 		std::string message;
 
 	public:
-		/// \brief Initializes a new VarIntTooBig error to be thrown.
+		/// \brief Initializes a new PaddingOutOfRange error to be thrown.
 		///
 		/// \param[in] value The error message.
-		///
-		/// \throws VarIntTooBig error
-		explicit VarIntTooBig(std::string value) : message(std::string("[VarIntTooBig] ") + std::move(value)) {}
-		explicit VarIntTooBig(const char *value) : message(std::string("[VarIntTooBig] ") + value) {}
+		/// \throws PaddingOutOfRange error
+		explicit PaddingOutOfRange(std::string value) : message(std::string("[PaddingOutOfRange] ") + std::move(value)) {}
+		explicit PaddingOutOfRange(const char *value) : message(std::string("[PaddingOutOfRange] ") + value) {}
 
 		/// \brief Retrieves the error message as a string.
 		///

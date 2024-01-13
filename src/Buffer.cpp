@@ -17,7 +17,7 @@
 
 #include <BinaryStream/Buffer.hpp>
 
-Binary::Buffer::Buffer(std::uint8_t *binary, size_t size, size_t position, bool auto_reallocation)
+Binary::Buffer::Buffer(std::uint8_t *binary, std::size_t size, std::size_t position, bool auto_reallocation)
 	: binary(binary), size(size), position(position), auto_reallocation(auto_reallocation)
 {
 }
@@ -40,12 +40,12 @@ std::uint8_t *Binary::Buffer::getBinary()
 	return this->binary;
 }
 
-size_t Binary::Buffer::getSize() const
+std::size_t Binary::Buffer::getSize() const
 {
 	return this->size;
 }
 
-size_t Binary::Buffer::getPosition() const
+std::size_t Binary::Buffer::getPosition() const
 {
 	return this->position;
 }
@@ -55,9 +55,9 @@ bool Binary::Buffer::isAutoReallocationEnabled() const
 	return this->auto_reallocation;
 }
 
-void Binary::Buffer::writeAligned(std::uint8_t *binary_to_align, size_t align_size)
+void Binary::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t align_size)
 {
-	size_t new_size = this->size + align_size;
+	std::size_t new_size = this->size + align_size;
 
 	if (this->size < 0 || this->position < 0)
 	{
@@ -81,7 +81,7 @@ void Binary::Buffer::writeAligned(std::uint8_t *binary_to_align, size_t align_si
 	std::memcpy(&this->binary[this->position - align_size], binary_to_align, align_size);
 }
 
-std::uint8_t Binary::Buffer::at(size_t pos)
+std::uint8_t Binary::Buffer::at(std::size_t pos)
 {
 	if (this->size < pos)
 	{

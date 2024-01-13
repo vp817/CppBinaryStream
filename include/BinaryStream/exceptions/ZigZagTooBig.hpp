@@ -21,20 +21,20 @@
 
 namespace Binary::exceptions
 {
-	class VarIntTooBig : public std::exception
+	class ZigZagTooBig : public std::exception
 	{
 	private:
 		/// \brief The error message associated with the exception.
 		std::string message;
 
 	public:
-		/// \brief Initializes a new VarIntTooBig error to be thrown.
+		/// \brief Initializes a new ZigZagTooBig error to be thrown.
 		///
 		/// \param[in] value The error message.
 		///
-		/// \throws VarIntTooBig error
-		explicit VarIntTooBig(std::string value) : message(std::string("[VarIntTooBig] ") + std::move(value)) {}
-		explicit VarIntTooBig(const char *value) : message(std::string("[VarIntTooBig] ") + value) {}
+		/// \throws ZigZagTooBig error
+		explicit ZigZagTooBig(std::string value) : message(std::string("[ZigZagTooBig] ") + std::move(value)) {}
+		explicit ZigZagTooBig(const char *value) : message(std::string("[ZigZagTooBig] ") + value) {}
 
 		/// \brief Retrieves the error message as a string.
 		///

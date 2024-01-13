@@ -25,18 +25,12 @@
 
 namespace Binary
 {
-
-	/// \brief The Buffer class
 	class Buffer
 	{
 	protected:
-		/// \brief A pointer to a uint8_t array representing the binary data.
 		std::uint8_t *binary;
-		/// \brief The size of the binary data.
 		size_t size;
-		/// \brief The current position of the write head in the binary data buffer.
 		size_t position;
-		/// \brief Whether automatic reallocation of the binary data buffer is enabled.
 		bool auto_reallocation;
 
 	public:

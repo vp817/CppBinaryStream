@@ -21,8 +21,6 @@
 
 namespace Binary::exceptions
 {
-
-	/// \brief The EndOfStream class
 	class EndOfStream : public std::exception
 	{
 	private:
