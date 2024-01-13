@@ -1,6 +1,6 @@
 // CppBinaryStream - A binary stream library implemented in C++.
 //
-// Copyright (C) 2023  vp817
+// Copyright (C) 2024  vp817
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
