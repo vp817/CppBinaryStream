@@ -282,7 +282,7 @@ namespace Binary
 		/// \tparam T the type that will be used to read the string length.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		///
-		/// \return The T value read from the buffer.
+		/// \return The string value read from the buffer.
 		template <typename T>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readString(bool big_endian = true)
 		{
@@ -294,7 +294,7 @@ namespace Binary
 		///
 		/// \tparam T the type that will be used to read the string length.
 		///
-		/// \return The T value read from the buffer.
+		/// \return The string value read from the buffer.
 		template <typename T = std::uint32_t>
 		std::enable_if_t<std::is_arithmetic_v<T> && std::is_unsigned_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readStringVarInt()
 		{
