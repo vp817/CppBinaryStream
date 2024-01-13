@@ -6,50 +6,29 @@ CppBinaryStream is a C++ library that provides functionality for working with bi
 
 The main component of the API is the `BinaryStream` class. This class provides functions for reading and writing binary data to a buffer. The following functions are available for writing data:
 
-- `writeUInt8(uint8_t value)`: Writes an 8-bit unsigned integer to the buffer.
-- `writeInt8(int8_t value)`: Writes an 8-bit signed integer to the buffer.
-- `writeBool(bool value)`: Writes a boolean value to the buffer.
-- `writeBit(bool value)`: Writes a single bit to the buffer.
-- `writeBits(T value, int size)`: Writes a specified number of bits from a value to the buffer.
-- `writeUInt16(uint16_t value)`: Writes a 16-bit unsigned integer to the buffer.
-- `writeInt16(int16_t value)`: Writes a 16-bit signed integer to the buffer.
-- `writeUInt24(uint32_t value)`: Writes a 24-bit unsigned integer to the buffer.
-- `writeInt24(int32_t value)`: Writes a 24-bit signed integer to the buffer.
-- `writeUInt32(uint32_t value)`: Writes a 32-bit unsigned integer to the buffer.
-- `writeInt32(int32_t value)`: Writes a 32-bit signed integer to the buffer.
-- `writeUInt64(uint64_t value)`: Writes a 64-bit unsigned integer to the buffer.
-- `writeInt64(int64_t value)`: Writes a 64-bit signed integer to the buffer.
-- `writeFloat(float value)`: Writes a floating-point value to the buffer.
-- `writeDouble(double value)`: Writes a double-precision floating-point value to the buffer.
-- `writeVarInt32(uint32_t value)`: Writes a varint32 value to the buffer.
-- `writeVarInt64(uint64_t value)`: Writes a varint64 value to the buffer.
-- `writeZigZag32(int32_t value)`: Writes a zigzag-encoded 32-bit integer to the buffer.
-- `writeZigZag64(int64_t value)`: Writes a zigzag-encoded 64-bit integer to the buffer.
+- `write(value, big_endian = true)`: Writes a value to the buffer. The byte order is specified by the `big_endian` parameter.
+- `writeFloat(value, big_endian = true)`: Writes a floating-point value to the buffer. The byte order is specified by the `big_endian` parameter.
+- `writeString(value, big_endian = true)`: Writes a string to the buffer, preceded by a length value of type `T`. The byte order is specified by the `big_endian` parameter.
+- `writeStringVarInt(value)`: Writes a string to the buffer, preceded by a varint32 length value.
+- `writeVarInt(value)`: Writes a varint value to the buffer.
+- `writeZigZag(value)`: Writes a zigzag-encoded integer to the buffer.
+- `writePadding(value, size)`: Writes a padding value to the buffer.
+- `writeBit(value, skip = false)`: Writes a single bit to the buffer. The `skip` parameter determines whether to skip to the next byte after writing the bit.
+- `writeOptional(value)`: Writes an optional value to the buffer.
+- `writeBits(value, size, big_endian = true)`: Writes a specified number of bits from a value to the buffer, starting from the most significant bit. The byte order is specified by the `big_endian` parameter.
 
 The following functions are available for reading data:
 
-- `readUInt8()`: Reads an 8-bit unsigned integer from the buffer.
-- `readInt8()`: Reads an 8-bit signed integer from the buffer.
-- `readBool()`: Reads a boolean value from the buffer.
-- `readBit()`: Reads a single bit from the buffer.
-- `readBits(T size)`: Reads a specified number of bits from the buffer and returns a value of type T.
-- `readUInt16()`: Reads a 16-bit unsigned integer from the buffer.
-- `readInt16()`: Reads a 16-bit signed integer from the buffer.
-- `readUInt24()`: Reads a 24-bit unsigned integer from the buffer.
-- `readInt24()`: Reads a 24-bit signed integer from the buffer.
-- `readUInt32()`: Reads a 32-bit unsigned integer from the buffer.
-- `readInt32()`: Reads a 32-bit signed integer from the buffer.
-- `readUInt64()`: Reads a 64-bit unsigned integer from the buffer.
-- `readInt64()`: Reads a 64-bit signed integer from the buffer.
-- `readFloat()`: Reads a floating-point value from the buffer.
-- `readDouble()`: Reads a double-precision floating-point value from the buffer.
-- `readVarInt32()`: Reads a varint32 value from the buffer and returns a uint32_t.
-- `readVarInt64()`: Reads a varint64 value from the buffer and returns a uint64_t.
-- `readZigZag32()`: Reads a zigzag-encoded 32-bit integer from the buffer and returns an int32_t.
-- `readZigZag64()`: Reads a zigzag-encoded 64-bit integer from the buffer and returns an int64_t.
-- `readRemaining()`: Reads the remaining data in the buffer and returns a pointer to a `Buffer` object.
-
-The `BinaryStream` class also provides functions for other operations, including skipping bytes, padding the buffer with zeros, and resetting the buffer.
+- `read<T>(big_endian = true)`: Reads a value of type `T` from the buffer. The byte order is specified by the `big_endian` parameter.
+- `readFloat(big_endian = true)`: Reads a floating-point value from the buffer. The byte order is specified by the `big_endian` parameter.
+- `readString<T>(big_endian = true)`: Reads a string from the buffer, preceded by a length value of type `T`. The byte order is specified by the `big_endian` parameter.
+- `readStringVarInt()`: Reads a string from the buffer, preceded by a varint32 length value.
+- `readVarInt<T>()`: Reads a varint value of type `T` from the buffer.
+- `readZigZag<T>()`: Reads a zigzag-encoded integer of type `T` from the buffer.
+- `readPadding(value, size)`: Reads a padding value from the buffer.
+- `readBit(skip = false)`: Reads a single bit from the buffer. The `skip` parameter determines whether to skip to the next byte after reading the bit.
+- `readOptional(value)`: Reads an optional value from the buffer.
+- `readBits<T>(size, big_endian = true)`: Reads a specified number of bits from the buffer, starting from the most significant bit. The byte order is specified by the `big_endian` parameter.
 
 ## Building
 
