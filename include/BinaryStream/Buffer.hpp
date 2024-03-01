@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 namespace Binary
 {
