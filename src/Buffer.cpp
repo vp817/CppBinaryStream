@@ -71,7 +71,7 @@ void Binary::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t ali
 			this->size = new_size;
 			this->binary = static_cast<std::uint8_t *>(realloc(this->binary, this->size));
 		}
-		else if (!this->auto_reallocation)
+		else
 		{
 			throw exceptions::EndOfStream("Attempted to write to buffer at position " + std::to_string(this->position) + ", but buffer is at maximum size.");
 		}
