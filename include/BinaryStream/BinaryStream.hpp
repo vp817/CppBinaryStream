@@ -240,13 +240,14 @@ namespace Binary
 		template <typename T>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> || (std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), T> read(bool big_endian = true)
 		{
-			T result = 0;
 			auto size = sizeof(T);
 
 			if (size == 1)
 			{
 				return static_cast<T>(this->readAligned(1)->at(0));
 			}
+
+			T result = 0;
 
 			for (std::size_t i = 0; i < size; ++i)
 			{
