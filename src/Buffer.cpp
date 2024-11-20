@@ -57,13 +57,12 @@ bool Binary::Buffer::isAutoReallocationEnabled() const
 
 void Binary::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t align_size)
 {
-	std::size_t new_size = this->size + align_size;
-
 	if (this->size < 0 || this->position < 0)
 	{
 		throw std::invalid_argument("Buffer size and position must not be negative, but got size = " + std::to_string(this->size) + ", position = " + std::to_string(this->position));
 	}
 
+	std::size_t new_size = this->size + align_size;
 	if (new_size > this->size || this->position > this->size)
 	{
 		if (this->auto_reallocation)
