@@ -6,7 +6,7 @@ CppBinaryStream is a C++ library that provides functionality for working with bu
 
 The main component of the API is the `BinaryStream` class. This class provides functions for reading and writing binary data to a buffer. The following functions are available for writing data:
 
-Read the BinaryStream.h file for more information since these below are not all.
+Read the header files for more information since these below are not all.
 
 The byte order is specified by the `big_endian` parameter.
 
