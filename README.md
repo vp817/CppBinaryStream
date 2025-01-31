@@ -1,10 +1,12 @@
 # CppBinaryStream
 
-CppBinaryStream is a C++ library that provides functionality for working with binary streams.
+CppBinaryStream is a C++ library that provides functionality for working with buffers/binary streams.
 
 ## API
 
 The main component of the API is the `BinaryStream` class. This class provides functions for reading and writing binary data to a buffer. The following functions are available for writing data:
+
+Read the BinaryStream.h file for more information since these below are not all.
 
 The byte order is specified by the `big_endian` parameter.
 
@@ -42,7 +44,7 @@ The library uses `CMake` as the build system. To build the library and the tests
 2. Run `cmake .`
 3. Run `cmake --build .`
 
-The library will be built as a shared library, and the tests will be built as an executable(see below).
+The library will be built as a static library, and the tests will be built as an executable(see below).
 
 ## Running the Tests
 
