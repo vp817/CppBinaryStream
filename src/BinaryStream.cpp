@@ -41,6 +41,12 @@ void Binary::BinaryStream::reset(bool auto_reallocation)
 	this->rewind();
 }
 
+void Binary::BinaryStream::setBuffer(Buffer *buffer)
+{
+	delete this->buffer;
+	this->buffer = buffer;
+}
+
 bool Binary::BinaryStream::eos()
 {
 	return this->position >= this->buffer->getSize();
