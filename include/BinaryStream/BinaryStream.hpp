@@ -63,6 +63,11 @@ namespace Binary
 		/// \param[in] auto_reallocation Enable automatic reallocation for the new buffer.
 		void reset(bool auto_reallocation = false);
 
+		/// \brief Deallocates the buffer and sets it to the new buffer specified.
+		///
+		/// \param[in] buffer The buffer to set to.
+		void setBuffer(Buffer *buffer);
+
 		/// \brief Checks if the stream has reached the end of the stream.
 		///
 		/// \return True if the stream has reached the end of the stream, false otherwise.
