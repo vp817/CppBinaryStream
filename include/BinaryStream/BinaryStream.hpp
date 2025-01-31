@@ -78,8 +78,9 @@ namespace Binary
 		/// \param[in] size The number of bytes to skip.
 		void ignoreBytes(std::size_t size);
 
-		/// \brief Use this function to reset the bit after reading
-		/// to avoid interference with other read or write operations that is bit-related.
+		/// \brief Use this function to reset the bit after reading and you
+		/// don't want to finish the rest of it to avoid interference with
+		/// other read or write operations that is bit-related.
 		void nullifyBit();
 
 		/// \brief Sets the current reading position.
