@@ -2,16 +2,6 @@
 
 CppBinaryStream is a C++ library that provides functionality for working with buffers/binary streams.
 
-## Usage
-
-The `BinaryStream` is the main and it is what you are going to mainly use.
-
-The `Buffer` is the holder of your buffer.
-
-The `Ints` contains new integers that you may want to use.
-
-Read the header file of each one of them for further understanding.
-
 ## Building
 
 The library uses `CMake` as the build system. To build the library and the tests, follow these steps:
