@@ -2,39 +2,15 @@
 
 CppBinaryStream is a C++ library that provides functionality for working with buffers/binary streams.
 
-## API
+## Usage
 
-The main component of the API is the `BinaryStream` class. This class provides functions for reading and writing binary data to a buffer. The following functions are available for writing data:
+The `BinaryStream` is the main and it is what you are going to mainly use.
 
-Read the header files for more information since these below are not all.
+The `Buffer` is the holder of your buffer.
 
-The byte order is specified by the `big_endian` parameter.
+The `Ints` contains new integers that you may want to use.
 
-If `False` then the byte order is little endian.
-
-- `write(value, big_endian = true)`: Writes a value to the buffer.
-- `writeFloat(value, big_endian = true)`: Writes a floating-point value to the buffer.
-- `writeString(value, big_endian = true)`: Writes a string to the buffer, preceded by a length value of type `T`.
-- `writeStringVarInt(value)`: Writes a string to the buffer, preceded by a varint32 length value.
-- `writeVarInt(value)`: Writes a varint value to the buffer.
-- `writeZigZag(value)`: Writes a zigzag-encoded integer to the buffer.
-- `writePadding(value, size)`: Writes a padding value to the buffer.
-- `writeBit(value, skip = false)`: Writes a single bit to the buffer. The `skip` parameter determines whether to skip to the next byte after writing the bit.
-- `writeOptional(value)`: Writes an optional value to the buffer.
-- `writeBits(value, size, big_endian = true)`: Writes a specified number of bits from a value to the buffer, starting from the most significant bit. The byte order is specified by the `big_endian` parameter.
-
-The following functions are available for reading data:
-
-- `read<T>(big_endian = true)`: Reads a value of type `T` from the buffer.
-- `readFloat(big_endian = true)`: Reads a floating-point value from the buffer.
-- `readString<T>(big_endian = true)`: Reads a string from the buffer, preceded by a length value of type `T`.
-- `readStringVarInt()`: Reads a string from the buffer, preceded by a varint32 length value.
-- `readVarInt<T>()`: Reads a varint value of type `T` from the buffer.
-- `readZigZag<T>()`: Reads a zigzag-encoded integer of type `T` from the buffer.
-- `readPadding(value, size)`: Reads a padding value from the buffer.
-- `readBit(skip = false)`: Reads a single bit from the buffer. The `skip` parameter determines whether to skip to the next byte after reading the bit.
-- `readOptional(value)`: Reads an optional value from the buffer.
-- `readBits<T>(size, big_endian = true)`: Reads a specified number of bits from the buffer, starting from the most significant bit.
+Read the header file of each one of them for further understanding.
 
 ## Building
 
@@ -44,15 +20,11 @@ The library uses `CMake` as the build system. To build the library and the tests
 2. Run `cmake .`
 3. Run `cmake --build .`
 
-The library will be built as a static library, and the tests will be built as an executable(see below).
+The library will be built as a static library(which can be changed if wanted by modifing the cmake file).
 
-## Running the Tests
+## Building the Tests
 
 The library comes with a set of tests to ensure its correctness. To build the tests using CMake, you can pass the `-DBINARY_STREAM_COMPILE_TESTS=ON` flag.
-
-```
-cmake . -DBINARY_STREAM_COMPILE_TESTS=ON
-```
 
 ## Contributing
 
