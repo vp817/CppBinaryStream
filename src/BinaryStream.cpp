@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <BinaryStream/BinaryStream.hpp>
+#include <BMLib/BinaryStream.hpp>
 
 BMLib::BinaryStream::BinaryStream(Buffer *buffer, std::size_t position)
 	: buffer(buffer), position(position), current_octet(0), bit_count(0)

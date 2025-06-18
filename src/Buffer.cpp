@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <BinaryStream/Buffer.hpp>
+#include <BMLib/Buffer.hpp>
 
 BMLib::Buffer::Buffer(std::uint8_t *binary, std::size_t size, std::size_t position, bool auto_realloc, bool dynamic)
 	: binary(binary), size(size), position(position), auto_realloc(auto_realloc), dynamic(dynamic)
