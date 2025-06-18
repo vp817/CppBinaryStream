@@ -103,6 +103,8 @@ int main()
 
 	printf("Old buffer size: %zu\n", stream->getBuffer()->getSize());
 
+	delete paddingBuffer;
+
 	stream->reset(true);
 
 	printf("Little Endian:\n");

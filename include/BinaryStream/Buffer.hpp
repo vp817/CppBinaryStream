@@ -35,6 +35,7 @@ namespace BMLib
 		std::size_t size;
 		std::size_t position;
 		bool auto_realloc;
+		bool dynamic;
 
 	public:
 		/// \brief Initializes a new Buffer instance.
@@ -43,7 +44,8 @@ namespace BMLib
 		/// \param[in] size The size of the binary data which must be the same as the allocated binary size.
 		/// \param[in] position The writing position.
 		/// \param[in] auto_realloc Enables auto memory reallocation.
-		explicit Buffer(std::uint8_t *binary, std::size_t size, std::size_t position = 0, bool auto_realloc = false);
+		/// \param[in] dynamic Whether the binary data is dynamic or not.
+		explicit Buffer(std::uint8_t *binary, std::size_t size, std::size_t position = 0, bool auto_realloc = false, bool dynamic = true);
 
 		/// \brief Allocates an empty variable-sized buffer.
 		///
@@ -101,7 +103,7 @@ namespace BMLib
 		std::uint8_t at(size_t pos);
 
 	private:
-		void internalNegativeCheck();
+		void internalParamsCheck();
 		void internalResize(std::size_t value);
 	};
 }

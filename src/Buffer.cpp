@@ -17,22 +17,23 @@
 
 #include <BinaryStream/Buffer.hpp>
 
-BMLib::Buffer::Buffer(std::uint8_t *binary, std::size_t size, std::size_t position, bool auto_realloc)
-	: binary(binary), size(size), position(position), auto_realloc(auto_realloc)
+BMLib::Buffer::Buffer(std::uint8_t *binary, std::size_t size, std::size_t position, bool auto_realloc, bool dynamic)
+	: binary(binary), size(size), position(position), auto_realloc(auto_realloc), dynamic(dynamic)
 {
 }
 
 BMLib::Buffer::~Buffer()
 {
-	delete[] this->binary;
+	if (this->dynamic)
+		std::free(this->binary);
 	this->binary = nullptr;
 	this->size = -1;
 	this->position = -1;
 }
 
-BMLib::Buffer *BMLib::Buffer::allocate(bool auto_reallocation_enabled, std::size_t alloc_size)
+BMLib::Buffer *BMLib::Buffer::allocate(bool auto_realloc_enabled, std::size_t alloc_size)
 {
-	return new Buffer(new std::uint8_t[alloc_size], alloc_size, 0, auto_reallocation_enabled);
+	return new Buffer(static_cast<std::uint8_t *>(std::malloc(alloc_size)), alloc_size, 0, auto_realloc_enabled);
 }
 
 std::uint8_t *BMLib::Buffer::getBinary()
@@ -57,7 +58,7 @@ bool BMLib::Buffer::isAutoReallocEnabled() const
 
 void BMLib::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t align_size)
 {
-	this->internalNegativeCheck();
+	this->internalParamsCheck();
 	this->internalResize(align_size);
 	this->position += align_size;
 	std::memcpy(&this->binary[this->position - align_size], binary_to_align, align_size);
@@ -65,10 +66,9 @@ void BMLib::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t alig
 
 void BMLib::Buffer::writeSingle(std::uint8_t value)
 {
-	this->internalNegativeCheck();
+	this->internalParamsCheck();
 	this->internalResize(1);
 	this->binary[this->position++] = value;
-	// this->writeAligned(&value, 1);
 }
 
 std::uint8_t BMLib::Buffer::at(std::size_t pos)
@@ -78,8 +78,10 @@ std::uint8_t BMLib::Buffer::at(std::size_t pos)
 	return this->binary[pos];
 }
 
-void BMLib::Buffer::internalNegativeCheck()
+void BMLib::Buffer::internalParamsCheck()
 {
+	if (!this->dynamic)
+		throw std::invalid_argument("Attempted to modify non-dynamic buffer.");
 	if (this->size < 0 || this->position < 0)
 		throw std::invalid_argument("Buffer size and position must not be negative, but got size = " + std::to_string(this->size) + ", position = " + std::to_string(this->position));
 }
@@ -90,7 +92,7 @@ void BMLib::Buffer::internalResize(std::size_t value)
 	if (new_size > this->size || this->position > this->size) {
 		if (this->auto_realloc) {
 			this->size = new_size;
-			this->binary = static_cast<std::uint8_t *>(realloc(this->binary, this->size));
+			this->binary = static_cast<std::uint8_t *>(std::realloc(this->binary, this->size));
 		}
 		else
 			throw exceptions::EndOfStream("Attempted to write to buffer at position " + std::to_string(this->position) + ", but buffer is at maximum size.");

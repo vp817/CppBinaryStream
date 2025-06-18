@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cstdlib>
 #include "Buffer.hpp"
 #include "exceptions/EndOfStream.hpp"
 #include "exceptions/VarIntTooBig.hpp"
@@ -31,7 +29,10 @@
 #include <optional>
 #include <functional>
 #include <algorithm>
+
+#ifdef _WIN32
 #include <cstring>
+#endif
 
 namespace BMLib
 {
@@ -121,7 +122,7 @@ namespace BMLib
 		template <typename T>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> || (std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> write(T value, bool big_endian = true)
 		{
-			auto size = sizeof(T);
+			std::size_t size = sizeof(T);
 			if (size == 1) {
 				this->buffer->writeSingle(static_cast<std::uint8_t>(value));
 				return;
@@ -140,8 +141,9 @@ namespace BMLib
 		template <typename T>
 		std::enable_if_t<std::is_floating_point_v<T>> writeFloat(T value, bool big_endian = true)
 		{
-			auto size = sizeof(T);
-			auto bit_pattern = *reinterpret_cast<std::size_t *>(&value);
+			std::size_t size = sizeof(T);
+			std::size_t bit_pattern;
+			std::memcpy(&bit_pattern, &value, size);
 			for (std::size_t i = 0; i < size; i++)
 				this->write<std::uint8_t>(static_cast<std::uint8_t>(bit_pattern >> ((big_endian ? (size - i - 1) : i) << 3)));
 		}
@@ -237,11 +239,11 @@ namespace BMLib
 		template <typename T>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> || (std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), T> read(bool big_endian = true)
 		{
-			auto size = sizeof(T);
+			std::size_t size = sizeof(T);
 			if (size == 1)
 				return static_cast<T>(this->readSingle());
 
-			size_t result = 0;
+			std::size_t result = 0;
 			for (std::size_t i = 0; i < size; i++)
 				result |= this->read<std::uint8_t>() << ((big_endian ? (size - i - 1) : i) << 3);
 			return (T)result;
@@ -256,11 +258,12 @@ namespace BMLib
 		template <typename T>
 		std::enable_if_t<std::is_floating_point_v<T>, T> readFloat(bool big_endian = true)
 		{
-			auto size = sizeof(T);
-			auto bit_pattern_buffer = this->readAligned(size);
+			std::size_t size = sizeof(T);
+			Buffer *bit_pattern_buffer = this->readAligned(size);
 			std::size_t result = 0;
 			for (size_t i = 0; i < size; i++)
 				result |= static_cast<std::size_t>(bit_pattern_buffer->at(i)) << ((big_endian ? (size - i - 1) : i) << 3);
+			delete bit_pattern_buffer;
 			return *reinterpret_cast<T *>(&result);
 		}
 
@@ -274,7 +277,9 @@ namespace BMLib
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readString(bool big_endian = true)
 		{
 			T str_size = this->read<T>(big_endian);
-			std::uint8_t *bytes = this->readAligned(str_size)->getBinary();
+			Buffer *tmp_buf = this->readAligned(str_size);
+			std::uint8_t *bytes = tmp_buf->getBinary();
+			delete tmp_buf;
 			return std::string((char *)bytes, str_size);
 		}
 
@@ -287,7 +292,9 @@ namespace BMLib
 		std::enable_if_t<std::is_arithmetic_v<T> && std::is_unsigned_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readStringVarInt()
 		{
 			T str_size = this->readVarInt<T>();
-			std::uint8_t *bytes = this->readAligned(str_size)->getBinary();
+			Buffer *tmp_buf = this->readAligned(str_size);
+			std::uint8_t *bytes = tmp_buf->getBinary();
+			delete tmp_buf;
 			return std::string((char *)bytes, str_size);
 		}
 

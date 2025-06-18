@@ -24,3 +24,4 @@ x64/
 Makefile
 BinaryStreamTests
 libBinaryStream.a
+libBinaryStream.so

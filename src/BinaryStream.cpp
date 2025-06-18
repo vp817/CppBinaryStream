@@ -84,7 +84,7 @@ BMLib::Buffer *BMLib::BinaryStream::readAligned(std::size_t size)
 {
 	this->internalEosCheck();
 	this->position += size;
-	return new Buffer(&this->buffer->getBinary()[this->position - size], size);
+	return new Buffer(&this->buffer->getBinary()[this->position - size], size, 0, false, false);
 }
 
 std::uint8_t BMLib::BinaryStream::readSingle()
@@ -95,11 +95,11 @@ std::uint8_t BMLib::BinaryStream::readSingle()
 
 void BMLib::BinaryStream::writePadding(std::uint8_t value, std::size_t size)
 {
-	auto *binary = static_cast<std::uint8_t *>(calloc(size, 1));
+	std::uint8_t *tmp = static_cast<std::uint8_t *>(std::calloc(size, 1));
 	if (value != 0)
-		std::fill_n(binary, size, value);
-	this->buffer->writeAligned(binary, size);
-	delete[] binary;
+		std::fill_n(tmp, size, value);
+	this->buffer->writeAligned(tmp, size);
+	std::free(tmp);
 }
 
 void BMLib::BinaryStream::writeBit(bool value, bool skip)
@@ -127,15 +127,15 @@ void BMLib::BinaryStream::writeOptional(std::optional<std::function<void(BinaryS
 BMLib::Buffer *BMLib::BinaryStream::readPadding(std::uint8_t value, std::size_t size)
 {
 	Buffer *result = this->readAligned(size);
-	auto temp_binary = new std::uint8_t[size];
-	std::fill_n(temp_binary, size, value);
+	std::uint8_t *tmp = new std::uint8_t[size];
+	std::fill_n(tmp, size, value);
 
-	if (std::memcmp(result->getBinary(), temp_binary, size) != 0) {
-		delete[] temp_binary;
+	if (std::memcmp(result->getBinary(), tmp, size) != 0) {
+		delete[] tmp;
 		throw exceptions::PaddingOutOfRange("Attempted to read padding of a value when there is no padding of that specific value.");
 	}
 
-	delete[] temp_binary;
+	delete[] tmp;
 	return result;
 }
 

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 option(BINARY_STREAM_COMPILE_TESTS "compile the tests or not." OFF)
 option(BINARY_STREAM_SHARED "compile the library as shared." OFF)
 
-file(GLOB_RECURSE LIB_FILES src/*.cpp)
+file(GLOB_RECURSE LIB_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 if(NOT BINARY_STREAM_SHARED)
 	add_library(BinaryStream STATIC ${LIB_FILES})
