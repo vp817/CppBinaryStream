@@ -36,7 +36,6 @@
 
 namespace BMLib
 {
-
 	class BinaryStream
 	{
 	protected:
