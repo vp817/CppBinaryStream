@@ -13,8 +13,6 @@ cmake-build-release-visual-studio/
 CMakeFiles/
 cmake_install.cmake
 CMakeCache.txt
-
-# Windows
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
@@ -23,10 +21,6 @@ CMakeCache.txt
 *.dir/
 Debug/
 x64/
-
-# Makefile
 Makefile
-
-# GCC/G++
 BinaryStreamTests
 libBinaryStream.a

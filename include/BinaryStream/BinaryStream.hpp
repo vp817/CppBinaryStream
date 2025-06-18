@@ -1,6 +1,6 @@
-// CppBinaryStream - A binary stream library implemented in C++.
+// CppBinaryStream - binary stream c++ library implemention.
 //
-// Copyright (C) 2024  vp817
+// Copyright (C) 2025  vp817
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <cstring>
 
-namespace Binary
+namespace BMLib
 {
 
 	class BinaryStream
@@ -60,17 +60,18 @@ namespace Binary
 
 		/// \brief Resets the buffer with a new allocated buffer.
 		///
-		/// \param[in] auto_reallocation Enable automatic reallocation for the new buffer.
-		void reset(bool auto_reallocation = false);
+		/// \param[in] auto_realloc Enable automatic reallocation for the new buffer.
+		/// \param[in] alloc_size The allocation size for the new buffer.
+		void reset(bool auto_realloc = false, std::size_t alloc_size = BIN_STRM_DEF_ALLOC_SZ);
 
 		/// \brief Deallocates the buffer and sets it to the new buffer specified.
 		///
 		/// \param[in] buffer The buffer to set to.
 		void setBuffer(Buffer *buffer);
 
-		/// \brief Checks if the stream has reached the end of the stream.
+		/// \brief Checks if the end of the stream was reached.
 		///
-		/// \return True if the stream has reached the end of the stream, false otherwise.
+		/// \return Condition of the action.
 		bool eos();
 
 		/// \brief Skips a specified number of bytes in the stream.
@@ -106,6 +107,12 @@ namespace Binary
 		/// \throws EndOfStream error
 		Buffer *readAligned(std::size_t size);
 
+		/// \brief Reads a single unsigned byte from the current position in the buffer.
+		///
+		/// \return The resulting unsigned byte value.
+		/// \throws EndOfStream error
+		std::uint8_t readSingle();
+
 		/// \brief Writes a type based on what the template type is.
 		///
 		/// \tparam T the type that will be written.
@@ -115,18 +122,14 @@ namespace Binary
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> || (std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> write(T value, bool big_endian = true)
 		{
 			auto size = sizeof(T);
-
-			if (size == 1)
-			{
-				std::uint8_t byte_to_write[1] = {static_cast<std::uint8_t>(value)};
-				this->buffer->writeAligned(byte_to_write, 1);
+			if (size == 1) {
+				this->buffer->writeSingle(static_cast<std::uint8_t>(value));
 				return;
 			}
 
-			for (std::size_t i = 0; i < size; ++i)
-			{
-				this->write<std::uint8_t>(static_cast<std::uint8_t>(value >> static_cast<std::uint8_t>((big_endian ? (size - i - 1) : i) << 3)));
-			}
+			std::size_t safe_value = static_cast<std::size_t>(value);
+			for (std::size_t i = 0; i < size; i++)
+				this->write<std::uint8_t>(static_cast<std::uint8_t>(safe_value >> static_cast<std::uint8_t>((big_endian ? (size - i - 1) : i) << 3)));
 		}
 
 		/// \brief Writes a floating-point number based on what the template type is.
@@ -139,11 +142,8 @@ namespace Binary
 		{
 			auto size = sizeof(T);
 			auto bit_pattern = *reinterpret_cast<std::size_t *>(&value);
-
-			for (std::size_t i = 0; i < size; ++i)
-			{
+			for (std::size_t i = 0; i < size; i++)
 				this->write<std::uint8_t>(static_cast<std::uint8_t>(bit_pattern >> ((big_endian ? (size - i - 1) : i) << 3)));
-			}
 		}
 
 		/// \brief Writes a string value to the buffer.
@@ -155,7 +155,7 @@ namespace Binary
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> writeString(std::string value, bool big_endian = true)
 		{
 			this->write<T>(static_cast<T>(value.size()), big_endian);
-			this->getBuffer()->writeAligned(reinterpret_cast<std::uint8_t *>(const_cast<char *>(value.c_str())), value.size());
+			this->buffer->writeAligned((std::uint8_t *)value.data(), value.size());
 		}
 
 		/// \brief Writes a varint string value to the buffer.
@@ -166,7 +166,7 @@ namespace Binary
 		std::enable_if_t<std::is_arithmetic_v<T> && std::is_unsigned_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> writeStringVarInt(std::string value)
 		{
 			this->writeVarInt<T>(static_cast<T>(value.size()));
-			this->getBuffer()->writeAligned(reinterpret_cast<std::uint8_t *>(const_cast<char *>(value.c_str())), value.size());
+			this->buffer->writeAligned((std::uint8_t *)value.data(), value.size());
 		}
 
 		/// \brief Writes a varint value to the buffer.
@@ -176,18 +176,12 @@ namespace Binary
 		template <typename T = std::uint32_t>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_array_v<T> && std::is_unsigned_v<T>> writeVarInt(T value)
 		{
-			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7); ++i)
-			{
+			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7); i++) {
 				std::uint8_t to_write = value & 0x7f;
-
 				value >>= 7;
-
 				if (value != 0)
-				{
 					this->write<uint8_t>(to_write | 0x80);
-				}
-				else
-				{
+				else {
 					this->write<uint8_t>(to_write);
 					break;
 				}
@@ -202,7 +196,6 @@ namespace Binary
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_array_v<T> && std::is_signed_v<T>> writeZigZag(T value)
 		{
 			auto to_write = static_cast<std::make_unsigned_t<T>>(value);
-
 			this->writeVarInt<decltype(to_write)>((to_write << 1) ^ (to_write >> ((sizeof(T) << 3) - 1)));
 		}
 
@@ -231,10 +224,8 @@ namespace Binary
 		template <typename T>
 		void writeBits(T value, int size, bool big_endian = true)
 		{
-			for (std::size_t i = 0; i < size; ++i)
-			{
+			for (std::size_t i = 0; i < size; i++)
 				this->writeBit(((value >> (big_endian ? (size - i - 1) : i)) & 1) == 1);
-			}
 		}
 
 		/// \brief Reads a type based on what the template type is.
@@ -247,20 +238,13 @@ namespace Binary
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> || (std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), T> read(bool big_endian = true)
 		{
 			auto size = sizeof(T);
-
 			if (size == 1)
-			{
-				return static_cast<T>(this->readAligned(1)->at(0));
-			}
+				return static_cast<T>(this->readSingle());
 
-			T result = 0;
-
-			for (std::size_t i = 0; i < size; ++i)
-			{
+			size_t result = 0;
+			for (std::size_t i = 0; i < size; i++)
 				result |= this->read<std::uint8_t>() << ((big_endian ? (size - i - 1) : i) << 3);
-			}
-
-			return result;
+			return (T)result;
 		}
 
 		/// \brief Reads a floating-point number based on what the template type is.
@@ -275,12 +259,8 @@ namespace Binary
 			auto size = sizeof(T);
 			auto bit_pattern_buffer = this->readAligned(size);
 			std::size_t result = 0;
-
-			for (size_t i = 0; i < size; ++i)
-			{
+			for (size_t i = 0; i < size; i++)
 				result |= static_cast<std::size_t>(bit_pattern_buffer->at(i)) << ((big_endian ? (size - i - 1) : i) << 3);
-			}
-
 			return *reinterpret_cast<T *>(&result);
 		}
 
@@ -293,8 +273,9 @@ namespace Binary
 		template <typename T>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readString(bool big_endian = true)
 		{
-			std::uint8_t *value = this->readAligned(this->read<T>(big_endian))->getBinary();
-			return std::string(reinterpret_cast<const char *>(value));
+			T str_size = this->read<T>(big_endian);
+			std::uint8_t *bytes = this->readAligned(str_size)->getBinary();
+			return std::string((char *)bytes, str_size);
 		}
 
 		/// \brief Reads a varint string value based on what the template type is.
@@ -305,7 +286,9 @@ namespace Binary
 		template <typename T = std::uint32_t>
 		std::enable_if_t<std::is_arithmetic_v<T> && std::is_unsigned_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readStringVarInt()
 		{
-			return std::string(reinterpret_cast<const char *>(this->readAligned(this->readVarInt<T>())->getBinary()));
+			T str_size = this->readVarInt<T>();
+			std::uint8_t *bytes = this->readAligned(str_size)->getBinary();
+			return std::string((char *)bytes, str_size);
 		}
 
 		/// \brief Reads a varint value from the buffer.
@@ -317,19 +300,12 @@ namespace Binary
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_array_v<T> && std::is_unsigned_v<T>, T> readVarInt()
 		{
 			std::uint32_t value = 0;
-
-			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7) * 7; i += 7)
-			{
+			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7) * 7; i += 7) {
 				std::uint8_t to_read = this->read<std::uint8_t>();
-
 				value |= (to_read & 0x7f) << i;
-
 				if ((to_read & 0x80) == 0)
-				{
 					return value;
-				}
 			}
-
 			throw exceptions::VarIntTooBig("Attempted to decode VarInt that is too big to be represented.");
 		}
 
@@ -343,18 +319,12 @@ namespace Binary
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_array_v<T> && std::is_signed_v<T>, T> readZigZag()
 		{
 			std::make_unsigned_t<T> varint = 0;
-
-			try
-			{
+			try {
 				varint = this->readVarInt<decltype(varint)>();
-			}
-			catch (...)
-			{
+			} catch (...) {
 				throw exceptions::ZigZagTooBig("Attempted to decode ZigZag that is too big to be represented.");
 			}
-
 			auto value = static_cast<T>(varint);
-
 			return (value >> 1) ^ -(value & 1);
 		}
 
@@ -388,12 +358,8 @@ namespace Binary
 		T readBits(T size, bool big_endian = true)
 		{
 			T result = 0;
-
-			for (std::size_t i = 0; i < size; ++i)
-			{
+			for (std::size_t i = 0; i < size; i++)
 				result |= static_cast<std::uint8_t>(this->readBit()) << (big_endian ? (size - i - 1) : i);
-			}
-
 			return result;
 		}
 
@@ -401,5 +367,8 @@ namespace Binary
 		///
 		/// \return A pointer to the Buffer object representing the remaining buffer.
 		Buffer *readRemaining();
+
+	private:
+		void internalEosCheck();
 	};
 }

@@ -10,11 +10,11 @@ The library uses `CMake` as the build system. To build the library and the tests
 2. Run `cmake .`
 3. Run `cmake --build .`
 
-The library will be built as a static library(which can be changed if wanted by modifing the cmake file).
+The library will be built as a static library which can be changed to shared if the flag `BINARY_STREAM_SHARED` was specified.
 
 ## Building the Tests
 
-The library comes with a set of tests to ensure its correctness. To build the tests using CMake, you can pass the `-DBINARY_STREAM_COMPILE_TESTS=ON` flag.
+To build the tests using CMake, you can pass the `BINARY_STREAM_COMPILE_TESTS` flag.
 
 ## Contributing
 

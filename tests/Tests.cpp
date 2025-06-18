@@ -1,6 +1,6 @@
-// CppBinaryStream - A binary stream library implemented in C++.
+// CppBinaryStream - binary stream c++ library implemention.
 //
-// Copyright (C) 2024  vp817
+// Copyright (C) 2025  vp817
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,13 @@
 
 #include <BinaryStream/BinaryStream.hpp>
 
-using namespace Binary;
-
+using namespace BMLib;
 
 int main()
 {
 	printf("Big Endian:\n");
 
-	auto *stream = new BinaryStream(Buffer::allocateZero(), 0);
+	BinaryStream *stream = new BinaryStream(Buffer::allocate(true,0), 0);
 	stream->write<std::uint8_t>(1);
 	stream->write<std::uint8_t>(3);
 	stream->write<std::uint8_t>(2);
@@ -56,8 +55,8 @@ int main()
 	stream->writeVarInt<std::uint64_t>(1000);
 	stream->writeZigZag(100);
 	stream->writeZigZag<std::int64_t>(1000);
-	stream->writeStringVarInt<std::uint32_t>("String Test (Varint)"); // cannot be under a normal write string, so you may use another stream then write that another stream binary into the current stream
 	stream->writeString<std::uint32_t>("String Test (Not varint)");
+	stream->writeStringVarInt<std::uint32_t>("String Test (Varint)");
 
 	stream->writePadding(0, 1024);
 
@@ -93,8 +92,8 @@ int main()
 	printf("VarInt64: %lu\n", stream->readVarInt<std::uint64_t>());
 	printf("ZigZag32: %u\n", stream->readZigZag());
 	printf("ZigZag64: %li\n", stream->readZigZag<std::int64_t>());
-	printf("StringVarInt: %s\n", stream->readStringVarInt().c_str());
 	printf("String: %s\n", stream->readString<std::uint32_t>().c_str());
+	printf("StringVarInt: %s\n", stream->readStringVarInt().c_str());
 
 	Buffer *paddingBuffer = stream->readPadding(0, 1024);
 	printf("ZeroPaddingSize: %zu\n", paddingBuffer->getSize());
@@ -140,17 +139,20 @@ int main()
 
 	printf("Optional:\n");
 
-	stream->writeOptional([](BinaryStream *stream)
-						  { stream->writeStringVarInt("Inside of a optional function"); });
+	stream->writeOptional([](BinaryStream *stream) {
+		stream->writeStringVarInt("Inside of an optional function");
+	});
 
 	stream->writeOptional(std::nullopt);
 
 	std::string opt_string;
-	stream->readOptional([&](BinaryStream *stream)
-						 { opt_string = stream->readStringVarInt(); });
+	stream->readOptional([&](BinaryStream *stream) {
+		opt_string = stream->readStringVarInt();
+	});
 
-	stream->readOptional([&](BinaryStream *stream)
-						 { printf("Second optional read (Won't work)\n"); });
+	stream->readOptional([&](BinaryStream *stream) {
+		printf("Second optional read (should'nt print)\n");
+	});
 
 	printf("OptionalString: %s\n", opt_string.c_str());
 

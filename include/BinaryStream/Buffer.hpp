@@ -1,6 +1,6 @@
-// CppBinaryStream - A binary stream library implemented in C++.
+// CppBinaryStream - binary stream c++ library implemention.
 //
-// Copyright (C) 2024  vp817
+// Copyright (C) 2025  vp817
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,31 +24,34 @@
 #include <cstring>
 #include <string>
 
-namespace Binary
+#define BIN_STRM_DEF_ALLOC_SZ 512
+
+namespace BMLib
 {
 	class Buffer
 	{
 	protected:
 		std::uint8_t *binary;
-		size_t size;
-		size_t position;
-		bool auto_reallocation;
+		std::size_t size;
+		std::size_t position;
+		bool auto_realloc;
 
 	public:
 		/// \brief Initializes a new Buffer instance.
 		///
 		/// \param[in] binary The binary data that will be used.
-		/// \param[in] size The size of the binary data (must be the same as the allocated binary size).
+		/// \param[in] size The size of the binary data which must be the same as the allocated binary size.
 		/// \param[in] position The writing position.
-		/// \param[in] auto_reallocation Enables auto memory reallocation.
-		explicit Buffer(std::uint8_t *binary, size_t size, size_t position = 0, bool auto_reallocation = false);
+		/// \param[in] auto_realloc Enables auto memory reallocation.
+		explicit Buffer(std::uint8_t *binary, std::size_t size, std::size_t position = 0, bool auto_realloc = false);
 
-		/// \brief Allocates a zero-sized buffer with memory reallocation enabled.
+		/// \brief Allocates an empty variable-sized buffer.
 		///
-		/// \param[in] auto_reallocationEnabled Specifies whether auto reallocation is enabled or not.
+		/// \param[in] auto_realloc_enabled Specifies whether auto reallocation is enabled or not.
+		/// \param[in] alloc_size The size of the binary data.
 		///
 		/// \return A Buffer object representing the allocated buffer.
-		static Buffer *allocateZero(bool auto_reallocation_enabled = true);
+		static Buffer *allocate(bool auto_realloc_enabled = true, std::size_t alloc_size = BIN_STRM_DEF_ALLOC_SZ);
 
 		/// \brief The destructor for the Buffer object, responsible for memory deallocation and resetting the buffer to its default state.
 		~Buffer();
@@ -61,17 +64,17 @@ namespace Binary
 		/// \brief Retrieves the current size of the binary data.
 		///
 		/// \return The size of the binary data as a size_t value.
-		size_t getSize() const;
+		std::size_t getSize() const;
 
 		/// \brief Retrieves the current writing position in the binary data.
 		///
 		/// \return The writing position as a size_t value.
-		size_t getPosition() const;
+		std::size_t getPosition() const;
 
 		/// \brief Checks if auto reallocation is enabled.
 		///
 		/// \return A boolean value indicating whether auto reallocation is enabled or not.
-		bool isAutoReallocationEnabled() const;
+		bool isAutoReallocEnabled() const;
 
 		/// \brief Writes the binary data after the current binary data.
 		///
@@ -82,11 +85,23 @@ namespace Binary
 		/// \throws Binary::exceptions::EndOfStream if the buffer is at maximum size and auto reallocation is not enabled.
 		void writeAligned(std::uint8_t *binary_to_align, size_t align_size);
 
+		/// \brief Writes a single byte to the current binary data.
+		///
+		/// \param[in] value The byte value to write.
+		//
+		/// \throws std::invalid_argument if the buffer size or position is negative.
+		/// \throws Binary::exceptions::EndOfStream if the buffer is at maximum size and auto reallocation is not enabled.
+		void writeSingle(std::uint8_t value);
+
 		/// \brief Retrieves a byte from a specific position in the buffer.
 		///
 		/// \param[in] pos The position to retrieve the byte from.
 		/// \return The byte value at the specified position.
 		/// \throws std::out_of_range error
 		std::uint8_t at(size_t pos);
+
+	private:
+		void internalNegativeCheck();
+		void internalResize(std::size_t value);
 	};
 }

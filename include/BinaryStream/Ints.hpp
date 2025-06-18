@@ -1,6 +1,6 @@
-// CppBinaryStream - A binary stream library implemented in C++.
+// CppBinaryStream - binary stream c++ library implemention.
 //
-// Copyright (C) 2024  vp817
+// Copyright (C) 2025  vp817
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include <cstring>
 #include <ostream>
 
-namespace Binary
+namespace BMLib
 {
     struct uint24
     {

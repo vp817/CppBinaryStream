@@ -1,6 +1,6 @@
-// CppBinaryStream - A binary stream library implemented in C++.
+// CppBinaryStream - binary stream c++ library implemention.
 //
-// Copyright (C) 2024  vp817
+// Copyright (C) 2025  vp817
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 
 #include <BinaryStream/Buffer.hpp>
 
-Binary::Buffer::Buffer(std::uint8_t *binary, std::size_t size, std::size_t position, bool auto_reallocation)
-	: binary(binary), size(size), position(position), auto_reallocation(auto_reallocation)
+BMLib::Buffer::Buffer(std::uint8_t *binary, std::size_t size, std::size_t position, bool auto_realloc)
+	: binary(binary), size(size), position(position), auto_realloc(auto_realloc)
 {
 }
 
-Binary::Buffer::~Buffer()
+BMLib::Buffer::~Buffer()
 {
 	delete[] this->binary;
 	this->binary = nullptr;
@@ -30,62 +30,69 @@ Binary::Buffer::~Buffer()
 	this->position = -1;
 }
 
-Binary::Buffer *Binary::Buffer::allocateZero(bool auto_reallocation_enabled)
+BMLib::Buffer *BMLib::Buffer::allocate(bool auto_reallocation_enabled, std::size_t alloc_size)
 {
-	return new Buffer(new std::uint8_t[0], 0, 0, auto_reallocation_enabled);
+	return new Buffer(new std::uint8_t[alloc_size], alloc_size, 0, auto_reallocation_enabled);
 }
 
-std::uint8_t *Binary::Buffer::getBinary()
+std::uint8_t *BMLib::Buffer::getBinary()
 {
 	return this->binary;
 }
 
-std::size_t Binary::Buffer::getSize() const
+std::size_t BMLib::Buffer::getSize() const
 {
 	return this->size;
 }
 
-std::size_t Binary::Buffer::getPosition() const
+std::size_t BMLib::Buffer::getPosition() const
 {
 	return this->position;
 }
 
-bool Binary::Buffer::isAutoReallocationEnabled() const
+bool BMLib::Buffer::isAutoReallocEnabled() const
 {
-	return this->auto_reallocation;
+	return this->auto_realloc;
 }
 
-void Binary::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t align_size)
+void BMLib::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t align_size)
 {
-	if (this->size < 0 || this->position < 0)
-	{
-		throw std::invalid_argument("Buffer size and position must not be negative, but got size = " + std::to_string(this->size) + ", position = " + std::to_string(this->position));
-	}
-
-	std::size_t new_size = this->size + align_size;
-	if (new_size > this->size || this->position > this->size)
-	{
-		if (this->auto_reallocation)
-		{
-			this->size = new_size;
-			this->binary = static_cast<std::uint8_t *>(realloc(this->binary, this->size));
-		}
-		else
-		{
-			throw exceptions::EndOfStream("Attempted to write to buffer at position " + std::to_string(this->position) + ", but buffer is at maximum size.");
-		}
-	}
-
+	this->internalNegativeCheck();
+	this->internalResize(align_size);
 	this->position += align_size;
 	std::memcpy(&this->binary[this->position - align_size], binary_to_align, align_size);
 }
 
-std::uint8_t Binary::Buffer::at(std::size_t pos)
+void BMLib::Buffer::writeSingle(std::uint8_t value)
+{
+	this->internalNegativeCheck();
+	this->internalResize(1);
+	this->binary[this->position++] = value;
+	// this->writeAligned(&value, 1);
+}
+
+std::uint8_t BMLib::Buffer::at(std::size_t pos)
 {
 	if (this->size < pos)
-	{
 		throw std::out_of_range("Attempted to access byte at position " + std::to_string(pos) + ", but buffer size is only " + std::to_string(this->size) + " bytes.");
-	}
+	return this->binary[pos];
+}
 
-	return static_cast<std::uint8_t>(this->binary[pos]);
+void BMLib::Buffer::internalNegativeCheck()
+{
+	if (this->size < 0 || this->position < 0)
+		throw std::invalid_argument("Buffer size and position must not be negative, but got size = " + std::to_string(this->size) + ", position = " + std::to_string(this->position));
+}
+
+void BMLib::Buffer::internalResize(std::size_t value)
+{
+	std::size_t new_size = this->size + value;
+	if (new_size > this->size || this->position > this->size) {
+		if (this->auto_realloc) {
+			this->size = new_size;
+			this->binary = static_cast<std::uint8_t *>(realloc(this->binary, this->size));
+		}
+		else
+			throw exceptions::EndOfStream("Attempted to write to buffer at position " + std::to_string(this->position) + ", but buffer is at maximum size.");
+	}
 }

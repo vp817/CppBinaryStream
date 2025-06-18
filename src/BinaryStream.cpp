@@ -1,6 +1,6 @@
-// CppBinaryStream - A binary stream library implemented in C++.
+// CppBinaryStream - binary stream c++ library implemention.
 //
-// Copyright (C) 2024  vp817
+// Copyright (C) 2025  vp817
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,169 +17,154 @@
 
 #include <BinaryStream/BinaryStream.hpp>
 
-Binary::BinaryStream::BinaryStream(Buffer *buffer, std::size_t position)
+BMLib::BinaryStream::BinaryStream(Buffer *buffer, std::size_t position)
 	: buffer(buffer), position(position), current_octet(0), bit_count(0)
 {
 }
 
-Binary::BinaryStream::~BinaryStream()
+BMLib::BinaryStream::~BinaryStream()
 {
 	delete this->buffer;
 	this->buffer = nullptr;
 	this->position = 0;
 }
 
-void Binary::BinaryStream::rewind()
+void BMLib::BinaryStream::rewind()
 {
 	this->position = 0;
 }
 
-void Binary::BinaryStream::reset(bool auto_reallocation)
+void BMLib::BinaryStream::reset(bool auto_realloc, std::size_t alloc_size)
 {
 	delete this->buffer;
-	this->buffer = Buffer::allocateZero(auto_reallocation);
+	this->buffer = Buffer::allocate(auto_realloc);
 	this->rewind();
 }
 
-void Binary::BinaryStream::setBuffer(Buffer *buffer)
+void BMLib::BinaryStream::setBuffer(Buffer *buffer)
 {
 	delete this->buffer;
 	this->buffer = buffer;
 }
 
-bool Binary::BinaryStream::eos()
+bool BMLib::BinaryStream::eos()
 {
 	return this->position >= this->buffer->getSize();
 }
 
-void Binary::BinaryStream::ignoreBytes(std::size_t size)
+void BMLib::BinaryStream::ignoreBytes(std::size_t size)
 {
 	this->position += size;
 }
 
-void Binary::BinaryStream::nullifyBit()
+void BMLib::BinaryStream::nullifyBit()
 {
-	if (this->current_octet != 0 && this->bit_count != 0)
-	{
+	if (this->current_octet > 0 && this->bit_count > 0) {
 		this->current_octet = 0;
 		this->bit_count = 0;
 	}
 }
 
-void Binary::BinaryStream::setPosition(std::size_t value)
+void BMLib::BinaryStream::setPosition(std::size_t value)
 {
 	this->position = value;
 }
 
-Binary::Buffer *Binary::BinaryStream::getBuffer()
+BMLib::Buffer *BMLib::BinaryStream::getBuffer()
 {
 	return this->buffer;
 }
 
-std::size_t Binary::BinaryStream::getPosition() const
+std::size_t BMLib::BinaryStream::getPosition() const
 {
 	return this->position;
 }
 
-Binary::Buffer *Binary::BinaryStream::readAligned(std::size_t size)
+BMLib::Buffer *BMLib::BinaryStream::readAligned(std::size_t size)
 {
-	if (this->eos())
-	{
-		throw Binary::exceptions::EndOfStream("Attempted to read past the end of the stream. No more bytes are available to read.");
-	}
-
+	this->internalEosCheck();
 	this->position += size;
 	return new Buffer(&this->buffer->getBinary()[this->position - size], size);
 }
 
-void Binary::BinaryStream::writePadding(std::uint8_t value, std::size_t size)
+std::uint8_t BMLib::BinaryStream::readSingle()
+{
+	this->internalEosCheck();
+	return this->buffer->at(this->position++);
+}
+
+void BMLib::BinaryStream::writePadding(std::uint8_t value, std::size_t size)
 {
 	auto *binary = static_cast<std::uint8_t *>(calloc(size, 1));
-
 	if (value != 0)
-	{
 		std::fill_n(binary, size, value);
-	}
-
 	this->buffer->writeAligned(binary, size);
-
 	delete[] binary;
 }
 
-void Binary::BinaryStream::writeBit(bool value, bool skip)
+void BMLib::BinaryStream::writeBit(bool value, bool skip)
 {
-	if (this->current_octet != 0 && this->bit_count == 0)
-	{
+	if (this->current_octet > 0 && this->bit_count == 0)
 		this->current_octet = 0;
-	}
 
 	this->current_octet |= static_cast<std::uint8_t>(value) << (7 - this->bit_count++);
 
-	if (this->bit_count == 8 || skip)
-	{
+	if (this->bit_count == 8 || skip) {
 		this->write<std::uint8_t>(this->current_octet);
 		this->current_octet = 0;
 		this->bit_count = 0;
 	}
 }
 
-void Binary::BinaryStream::writeOptional(std::optional<std::function<void(BinaryStream *)>> value)
+void BMLib::BinaryStream::writeOptional(std::optional<std::function<void(BinaryStream *)>> value)
 {
 	bool exists = value.has_value();
-
 	this->write<bool>(exists);
-
 	if (exists)
-	{
 		(value.value())(this);
-	}
 }
 
-Binary::Buffer *Binary::BinaryStream::readPadding(std::uint8_t value, std::size_t size)
+BMLib::Buffer *BMLib::BinaryStream::readPadding(std::uint8_t value, std::size_t size)
 {
 	Buffer *result = this->readAligned(size);
 	auto temp_binary = new std::uint8_t[size];
 	std::fill_n(temp_binary, size, value);
 
-	if (std::memcmp(result->getBinary(), temp_binary, size) != 0)
-	{
+	if (std::memcmp(result->getBinary(), temp_binary, size) != 0) {
 		delete[] temp_binary;
-		throw exceptions::PaddingOutOfRange("Attempted to read padding when padding buffer content does not match.");
+		throw exceptions::PaddingOutOfRange("Attempted to read padding of a value when there is no padding of that specific value.");
 	}
 
 	delete[] temp_binary;
 	return result;
 }
 
-bool Binary::BinaryStream::readBit(bool skip)
+bool BMLib::BinaryStream::readBit(bool skip)
 {
-	if (this->current_octet != 0 && this->bit_count == 0)
-	{
+	if (this->current_octet > 0 && this->bit_count == 0)
 		this->current_octet = 0;
-	}
-
-	if (this->bit_count == 0 || skip)
-	{
+	if (this->bit_count == 0 || skip) {
 		this->current_octet = this->read<std::uint8_t>();
 		this->bit_count = 8;
 	}
-
 	return (this->current_octet & (1 << (--this->bit_count))) != 0;
 }
 
-void Binary::BinaryStream::readOptional(std::optional<std::function<void(BinaryStream *)>> value)
+void BMLib::BinaryStream::readOptional(std::optional<std::function<void(BinaryStream *)>> value)
 {
 	bool exists = value.has_value();
-
 	bool has_value = this->read<bool>(exists);
-
 	if (exists && has_value)
-	{
 		(value.value())(this);
-	}
 }
 
-Binary::Buffer *Binary::BinaryStream::readRemaining()
+BMLib::Buffer *BMLib::BinaryStream::readRemaining()
 {
 	return this->readAligned(this->buffer->getSize() - this->position);
+}
+
+void BMLib::BinaryStream::internalEosCheck()
+{
+	if (this->eos())
+		throw BMLib::exceptions::EndOfStream("Attempted to read past the end of the stream. No more bytes available to read.");
 }
