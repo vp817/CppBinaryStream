@@ -153,7 +153,7 @@ namespace BMLib
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] big_endian Specifies whether to use big endian byte order.
 		template <typename T>
-		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> writeString(std::string value, bool big_endian = true)
+		std::enable_if_t<std::is_arithmetic_v<T> && std::is_unsigned_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> writeString(std::string value, bool big_endian = true)
 		{
 			this->write<T>(static_cast<T>(value.size()), big_endian);
 			this->buffer->writeAligned((std::uint8_t *)value.data(), value.size());
@@ -273,7 +273,7 @@ namespace BMLib
 		///
 		/// \return The string value read from the buffer.
 		template <typename T>
-		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readString(bool big_endian = true)
+		std::enable_if_t<std::is_arithmetic_v<T> && std::is_unsigned_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>), std::string> readString(bool big_endian = true)
 		{
 			T str_size = this->read<T>(big_endian);
 			Buffer *tmp_buf = this->readAligned(str_size);
