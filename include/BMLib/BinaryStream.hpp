@@ -244,8 +244,8 @@ namespace BMLib
 
 			std::size_t result = 0;
 			for (std::size_t i = 0; i < size; i++)
-				result |= this->read<std::uint8_t>() << ((big_endian ? (size - i - 1) : i) << 3);
-			return (T)result;
+				result |= static_cast<T>(this->read<std::uint8_t>()) << ((big_endian ? (size - i - 1) : i) << 3);
+			return static_cast<T>(result);
 		}
 
 		/// \brief Reads a floating-point number based on what the template type is.
