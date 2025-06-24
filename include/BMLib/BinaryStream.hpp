@@ -305,12 +305,12 @@ namespace BMLib
 		template <typename T = std::uint32_t>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_array_v<T> && std::is_unsigned_v<T>, T> readVarInt()
 		{
-			std::uint32_t value = 0;
-			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7) * 7; i += 7) {
+			std::size_t value = 0;
+			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7.0) * 7; i += 7) {
 				std::uint8_t to_read = this->read<std::uint8_t>();
-				value |= (to_read & 0x7f) << i;
+				value |= static_cast<T>(to_read & 0x7f) << i;
 				if ((to_read & 0x80) == 0)
-					return value;
+					return static_cast<T>(value);
 			}
 			throw exceptions::VarIntTooBig("Attempted to decode VarInt that is too big to be represented.");
 		}
