@@ -223,7 +223,7 @@ namespace BMLib
 		/// \param[in] size The number of bits to write.
 		/// \param[in] big_endian Specifies whether to use big endian bit order.
 		template <typename T>
-		void writeBits(T value, int size, bool big_endian = true)
+		void writeBits(T value, std::size_t size, bool big_endian = true)
 		{
 			for (std::size_t i = 0; i < size; i++)
 				this->writeBit(((value >> (big_endian ? (size - i - 1) : i)) & 1) == 1);
@@ -361,7 +361,7 @@ namespace BMLib
 		///
 		/// \return The value read from the buffer as type T.
 		template <typename T>
-		T readBits(T size, bool big_endian = true)
+		T readBits(std::size_t size, bool big_endian = true)
 		{
 			T result = 0;
 			for (std::size_t i = 0; i < size; i++)
