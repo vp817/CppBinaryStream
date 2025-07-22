@@ -64,6 +64,13 @@ void BMLib::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t alig
 	std::memcpy(&this->binary[this->position - align_size], binary_to_align, align_size);
 }
 
+void BMLib::Buffer::writeAligned(Buffer *in_buffer, bool destroy)
+{
+	this->writeAligned(in_buffer->getBinary(),in_buffer->getPosition());
+	if (destroy)
+		delete in_buffer;
+}
+
 void BMLib::Buffer::writeSingle(std::uint8_t value)
 {
 	this->internalParamsCheck();
