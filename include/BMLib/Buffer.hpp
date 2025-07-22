@@ -87,6 +87,14 @@ namespace BMLib
 		/// \throws Binary::exceptions::EndOfStream if the buffer is at maximum size and auto reallocation is not enabled.
 		void writeAligned(std::uint8_t *binary_to_align, size_t align_size);
 
+		/// \brief Writes the buffer data into the current buffer.
+		///
+		/// \param[in] in_buffer The buffer to be written into the current buffer.
+		/// \param[in] destroy destroy the in_buffer.
+		///
+		/// \throws what the other writeAligned throws
+		void writeAligned(Buffer *in_buffer, bool destroy=true);
+
 		/// \brief Writes a single byte to the current binary data.
 		///
 		/// \param[in] value The byte value to write.
