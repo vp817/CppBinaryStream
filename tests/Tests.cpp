@@ -24,6 +24,52 @@ int main()
 	printf("Big Endian:\n");
 
 	BinaryStream *stream = new BinaryStream(Buffer::allocate(true,0), 0);
+	printf("Bit Related Stuff:\n");
+	stream->writeBit(true);
+	stream->writeBit(true);
+	stream->writeBit(true);
+	stream->writeBit(false);
+	stream->writeBit(true);
+	stream->writeBit(true);
+	stream->writeBit(true);
+	stream->writeBit(true);
+
+	stream->writeBit(false);
+	stream->writeBit(true,true);
+
+	// 0 0 1 1 0 1 1 1 0 -> MSB
+	// 0 1 1 1 0 1 1 0 0 -> LSB
+	stream->writeBit(false,false,false);
+	stream->writeBit(false,false,false);
+	stream->writeBit(true,false,false);
+	stream->writeBit(false,false,false);
+	stream->writeBit(true,false,false);
+	stream->writeBit(true,false,false);
+	stream->writeBit(true,false,false);
+	stream->writeBit(false,false,false);
+
+	printf("Bit value: %d\n", stream->readBit());
+	printf("Bit value: %d\n", stream->readBit());
+	printf("Bit value: %d\n", stream->readBit());
+	printf("Bit value: %d\n", stream->readBit());
+	printf("Bit value: %d\n", stream->readBit());
+	printf("Bit value: %d\n", stream->readBit());
+	printf("Bit value: %d\n", stream->readBit());
+	printf("Bit value: %d\n", stream->readBit());
+
+	printf("Bit 2 value: %d\n", stream->readBit());
+	printf("Bit 2 value: %d\n", stream->readBit());
+	stream->resetBitReader();
+
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+
 	stream->write<std::uint8_t>(1);
 	stream->write<std::uint8_t>(3);
 	stream->write<std::uint8_t>(2);
@@ -77,9 +123,9 @@ int main()
 	printf("Bit: %d\n", stream->readBit() ? 1 : 0);
 	printf("Bit: %d\n", stream->readBit() ? 1 : 0);
 	printf("Bit: %d\n", stream->readBit() ? 1 : 0);
-	stream->nullifyBit();
+	stream->resetBitReader();
 	printf("UInt16 from bits: %d\n", stream->readBits<std::uint16_t>(8));
-	printf("Bit from uint8: %d\n", stream->readBits<std::uint16_t>(8) == 0x80 ? 1 : 0);
+	printf("Bit from uint8 is 0x80: %d\n", stream->readBits<std::uint16_t>(8) == 0x80 ? 1 : 0);
 	printf("Unsigned: %u\n", static_cast<std::uint32_t>(stream->read<uint24_t>()));
 	printf("Signed: %d\n", static_cast<std::int32_t>(stream->read<int24_t>()));
 	printf("Unsigned: %u\n", stream->read<std::uint32_t>());

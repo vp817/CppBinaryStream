@@ -46,7 +46,7 @@ std::size_t BMLib::Buffer::getSize() const
 	return this->size;
 }
 
-std::size_t BMLib::Buffer::getPosition() const
+std::size_t BMLib::Buffer::getNumOfBytesWritten() const
 {
 	return this->position;
 }
@@ -66,7 +66,7 @@ void BMLib::Buffer::writeAligned(std::uint8_t *binary_to_align, std::size_t alig
 
 void BMLib::Buffer::writeAligned(Buffer *in_buffer, bool destroy)
 {
-	this->writeAligned(in_buffer->getBinary(),in_buffer->getPosition());
+	this->writeAligned(in_buffer->getBinary(), in_buffer->getNumOfBytesWritten());
 	if (destroy)
 		delete in_buffer;
 }

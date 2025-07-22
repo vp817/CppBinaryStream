@@ -60,7 +60,7 @@ namespace BMLib
 
 		/// \brief Retrieves the current binary data.
 		///
-		/// \return A pointer to the uint8 array representing the binary data.
+		/// \return A pointer to the binary data.
 		std::uint8_t *getBinary();
 
 		/// \brief Retrieves the current size of the binary data.
@@ -68,10 +68,10 @@ namespace BMLib
 		/// \return The size of the binary data as a size_t value.
 		std::size_t getSize() const;
 
-		/// \brief Retrieves the current writing position in the binary data.
+		/// \brief Retrieves the current writing position/number of bytes written in the binary data.
 		///
-		/// \return The writing position as a size_t value.
-		std::size_t getPosition() const;
+		/// \return The resulting value.
+		std::size_t getNumOfBytesWritten() const;
 
 		/// \brief Checks if auto reallocation is enabled.
 		///
@@ -93,7 +93,7 @@ namespace BMLib
 		/// \param[in] destroy destroy the in_buffer.
 		///
 		/// \throws what the other writeAligned throws
-		void writeAligned(Buffer *in_buffer, bool destroy=true);
+		void writeAligned(Buffer *in_buffer, bool destroy = true);
 
 		/// \brief Writes a single byte to the current binary data.
 		///

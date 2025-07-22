@@ -41,8 +41,10 @@ namespace BMLib
 	protected:
 		Buffer *buffer;
 		std::size_t position;
-		std::uint8_t current_octet;
-		std::size_t bit_count;
+		std::uint8_t curr_write_octet;
+		std::size_t curr_bit_write_pos;
+		std::uint8_t curr_read_octet;
+		std::size_t curr_bit_read_pos;
 
 	public:
 		/// \brief Initializes a new instance of BinaryStream class.
@@ -79,10 +81,13 @@ namespace BMLib
 		/// \param[in] size The number of bytes to skip.
 		void ignoreBytes(std::size_t size);
 
-		/// \brief Use this function to reset the bit after reading and you
-		/// don't want to finish the rest of it to avoid interference with
-		/// other read or write operations that is bit-related.
-		void nullifyBit();
+		/// \brief Used to reset the octet used in the stream bit reading operations
+		/// and rewinds the position.
+		void resetBitReader();
+
+		/// \brief Used to reset the octet used in the stream bit writing operations
+		/// and rewinds the position.
+		void resetBitWriter();
 
 		/// \brief Sets the current reading position.
 		///
@@ -94,10 +99,10 @@ namespace BMLib
 		/// \return A pointer to the Buffer.
 		Buffer *getBuffer();
 
-		/// \brief Retrieves the current reading position.
+		/// \brief Retrieves the current reading position/number of bytes read.
 		///
-		/// \return The current reading position as a std::size_t value.
-		std::size_t getPosition() const;
+		/// \return The resulting value.
+		std::size_t getNumOfBytesRead() const;
 
 		/// \brief Reads aligned binary from the current position in the buffer.
 		///
@@ -126,9 +131,8 @@ namespace BMLib
 				this->buffer->writeSingle(static_cast<std::uint8_t>(value));
 				return;
 			}
-
 			std::size_t safe_value = static_cast<std::size_t>(value);
-			for (std::size_t i = 0; i < size; i++)
+			for (std::size_t i = 0; i < size; ++i)
 				this->write<std::uint8_t>(static_cast<std::uint8_t>(safe_value >> static_cast<std::uint8_t>((big_endian ? (size - i - 1) : i) << 3)));
 		}
 
@@ -143,7 +147,7 @@ namespace BMLib
 			std::size_t size = sizeof(T);
 			std::size_t bit_pattern;
 			std::memcpy(&bit_pattern, &value, size);
-			for (std::size_t i = 0; i < size; i++)
+			for (std::size_t i = 0; i < size; ++i)
 				this->write<std::uint8_t>(static_cast<std::uint8_t>(bit_pattern >> ((big_endian ? (size - i - 1) : i) << 3)));
 		}
 
@@ -177,7 +181,7 @@ namespace BMLib
 		template <typename T = std::uint32_t>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_array_v<T> && std::is_unsigned_v<T>> writeVarInt(T value)
 		{
-			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7); i++) {
+			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7); ++i) {
 				std::uint8_t to_write = value & 0x7f;
 				value >>= 7;
 				if (value != 0)
@@ -210,7 +214,8 @@ namespace BMLib
 		///
 		/// \param[in] value The value to write into the buffer.
 		/// \param[in] skip Whether to skip the process of filling it with zeros until its octet.
-		void writeBit(bool value, bool skip = false);
+		/// \param[in] msb_o Writes from the MSB to LSB.
+		void writeBit(bool value, bool skip = false, bool msb_o = true);
 
 		/// \brief Writes an optional value to the buffer.
 		///
@@ -221,12 +226,12 @@ namespace BMLib
 		///
 		/// \param[in] value The value to write.
 		/// \param[in] size The number of bits to write.
-		/// \param[in] big_endian Specifies whether to use big endian bit order.
+		/// \param[in] msb_o Writes from the MSB to LSB.
 		template <typename T>
-		void writeBits(T value, std::size_t size, bool big_endian = true)
+		void writeBits(T value, T size, bool msb_o = true)
 		{
-			for (std::size_t i = 0; i < size; i++)
-				this->writeBit(((value >> (big_endian ? (size - i - 1) : i)) & 1) == 1);
+			for (T i = 0; i < size; ++i)
+				this->writeBit(((value >> (msb_o ? (size - i - 1) : i)) & 0b1) == 0b1);
 		}
 
 		/// \brief Reads a type based on what the template type is.
@@ -243,7 +248,7 @@ namespace BMLib
 				return static_cast<T>(this->readSingle());
 
 			std::size_t result = 0;
-			for (std::size_t i = 0; i < size; i++)
+			for (std::size_t i = 0; i < size; ++i)
 				result |= static_cast<std::size_t>(this->read<std::uint8_t>()) << ((big_endian ? (size - i - 1) : i) << 3);
 			return static_cast<T>(result);
 		}
@@ -260,7 +265,7 @@ namespace BMLib
 			std::size_t size = sizeof(T);
 			Buffer *bit_pattern_buffer = this->readAligned(size);
 			std::size_t result = 0;
-			for (size_t i = 0; i < size; i++)
+			for (size_t i = 0; i < size; ++i)
 				result |= static_cast<std::size_t>(bit_pattern_buffer->at(i)) << ((big_endian ? (size - i - 1) : i) << 3);
 			delete bit_pattern_buffer;
 			return *reinterpret_cast<T *>(&result);
@@ -345,9 +350,10 @@ namespace BMLib
 		/// \brief Reads a bit from the buffer.
 		///
 		/// \param[in] skip Whether to skip to a new octet without waiting until the bit is completely read.
+		/// \param[in] msb_o Reads from the MSB to LSB.
 		///
 		/// \return The boolean value of the bit read from the buffer.
-		bool readBit(bool skip = false);
+		bool readBit(bool skip = false, bool msb_o = true);
 
 		/// \brief Reads an optional value to the buffer.
 		///
@@ -357,15 +363,15 @@ namespace BMLib
 		/// \brief Reads bits from the buffer.
 		///
 		/// \param[in] size The number of bits to read.
-		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		/// \param[in] msb_o Reads from the MSB to LSB.
 		///
 		/// \return The value read from the buffer as type T.
 		template <typename T>
-		T readBits(std::size_t size, bool big_endian = true)
+		T readBits(std::size_t size, bool msb_o = true)
 		{
 			T result = 0;
-			for (std::size_t i = 0; i < size; i++)
-				result |= static_cast<std::uint8_t>(this->readBit()) << (big_endian ? (size - i - 1) : i);
+			for (std::size_t i = 0; i < size; ++i)
+				result |= static_cast<std::uint8_t>(this->readBit()) << (msb_o ? (size - i - 1) : i);
 			return result;
 		}
 
@@ -373,8 +379,5 @@ namespace BMLib
 		///
 		/// \return A pointer to the Buffer object representing the remaining buffer.
 		Buffer *readRemaining();
-
-	private:
-		void internalEosCheck();
 	};
 }
