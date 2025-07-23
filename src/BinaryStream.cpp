@@ -117,7 +117,6 @@ void BMLib::BinaryStream::writeBit(bool value, bool skip, bool msb_o)
 		bit_value <<= this->curr_bit_write_pos;
 	this->curr_write_octet |= bit_value;
 	if (++this->curr_bit_write_pos == 8 || skip) {
-		printf("Written octet: %d\n", this->curr_write_octet);
 		this->write<std::uint8_t>(this->curr_write_octet);
 		this->curr_write_octet = 0;
 		this->curr_bit_write_pos = 0;
