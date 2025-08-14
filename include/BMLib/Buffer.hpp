@@ -1,4 +1,4 @@
-// CppBinaryStream - binary stream c++ library implemention.
+// CppBinaryStream
 //
 // Copyright (C) 2025  vp817
 //
@@ -24,20 +24,26 @@
 #include <cstring>
 #include <string>
 
-#define BIN_STRM_DEF_ALLOC_SZ 512
-
 namespace BMLib
 {
+	/// The Buffer class.
+	/// The public fields should not be touched unless absolutely needed, and that is also the reason they are public.
 	class Buffer
 	{
-	protected:
+	public:
+		static constexpr int DEFAULT_ALLOCATION_SIZE = 512;
+
+		// the allocated or not binary data.
 		std::uint8_t *binary;
+		// the size of the binary data.
 		std::size_t size;
+		// the writing position (the number of bytes written).
 		std::size_t position;
+		// whether auto reallocation is enabled.
 		bool auto_realloc;
+		// whether the binary data is dynamically allocated and if not then it is statically allocated.
 		bool dynamic;
 
-	public:
 		/// \brief Initializes a new Buffer instance.
 		///
 		/// \param[in] binary The binary data that will be used.
@@ -47,45 +53,25 @@ namespace BMLib
 		/// \param[in] dynamic Whether the binary data is dynamic or not.
 		explicit Buffer(std::uint8_t *binary, std::size_t size, std::size_t position = 0, bool auto_realloc = false, bool dynamic = true);
 
-		/// \brief Allocates an empty variable-sized buffer.
+		/// \brief Allocates an unsafe variable-sized buffer.
 		///
-		/// \param[in] auto_realloc_enabled Specifies whether auto reallocation is enabled or not.
+		/// \param[in] auto_realloc_enabled Enable memeory auto reallocation.
 		/// \param[in] alloc_size The size of the binary data.
 		///
 		/// \return A Buffer object representing the allocated buffer.
-		static Buffer *allocate(bool auto_realloc_enabled = true, std::size_t alloc_size = BIN_STRM_DEF_ALLOC_SZ);
+		static Buffer *allocate(bool auto_realloc_enabled = true, std::size_t alloc_size = DEFAULT_ALLOCATION_SIZE);
 
-		/// \brief The destructor for the Buffer object, responsible for memory deallocation and resetting the buffer to its default state.
+		/// \brief The destructor for the Buffer class, which deallocates the allocated memory.
 		~Buffer();
-
-		/// \brief Retrieves the current binary data.
-		///
-		/// \return A pointer to the binary data.
-		std::uint8_t *getBinary();
-
-		/// \brief Retrieves the current size of the binary data.
-		///
-		/// \return The size of the binary data as a size_t value.
-		std::size_t getSize() const;
-
-		/// \brief Retrieves the current writing position/number of bytes written in the binary data.
-		///
-		/// \return The resulting value.
-		std::size_t getNumOfBytesWritten() const;
-
-		/// \brief Checks if auto reallocation is enabled.
-		///
-		/// \return A boolean value indicating whether auto reallocation is enabled or not.
-		bool isAutoReallocEnabled() const;
 
 		/// \brief Writes the binary data after the current binary data.
 		///
-		/// \param[in] binary_to_align The binary data to be merged with the current binary data.
-		/// \param[in] align_size The size of the binary data to be merged.
+		/// \param[in] in_buffer The binary data to be merged with the current binary data.
+		/// \param[in] in_size The size of the binary data to be merged.
 		//
 		/// \throws std::invalid_argument if the buffer size or position is negative.
 		/// \throws Binary::exceptions::EndOfStream if the buffer is at maximum size and auto reallocation is not enabled.
-		void writeAligned(std::uint8_t *binary_to_align, size_t align_size);
+		void writeAligned(std::uint8_t *in_buffer, size_t in_size);
 
 		/// \brief Writes the buffer data into the current buffer.
 		///

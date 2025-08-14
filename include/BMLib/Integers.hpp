@@ -1,4 +1,4 @@
-// CppBinaryStream - binary stream c++ library implemention.
+// CppBinaryStream
 //
 // Copyright (C) 2025  vp817
 //
@@ -26,18 +26,18 @@
 
 namespace BMLib
 {
-    struct uint24
+    struct uint24_t
     {
         std::uint8_t bytes[3];
 
-        uint24(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2)
+        uint24_t(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2)
         {
             bytes[0] = b0;
             bytes[1] = b1;
             bytes[2] = b2;
         }
 
-        uint24(std::uint32_t value = 0)
+        uint24_t(std::uint32_t value = 0)
         {
             bytes[0] = static_cast<std::uint8_t>(value >> 16);
             bytes[1] = static_cast<std::uint8_t>(value >> 8);
@@ -53,7 +53,7 @@ namespace BMLib
             return value;
         }
 
-        uint24 &operator=(std::uint32_t rhs)
+        uint24_t &operator=(std::uint32_t rhs)
         {
             bytes[0] = static_cast<std::uint8_t>(rhs >> 16);
             bytes[1] = static_cast<std::uint8_t>(rhs >> 8);
@@ -61,62 +61,62 @@ namespace BMLib
             return *this;
         }
 
-        uint24 &operator++()
+        uint24_t &operator++()
         {
-            *this += uint24(0, 0, 1);
+            *this += uint24_t(0, 0, 1);
             return *this;
         }
 
-        uint24 operator++(int)
+        uint24_t operator++(int)
         {
-            uint24 temp(*this);
+            uint24_t temp(*this);
             ++(*this);
             return temp;
         }
 
-        uint24 &operator--()
+        uint24_t &operator--()
         {
-            *this -= uint24(0, 0, 1);
+            *this -= uint24_t(0, 0, 1);
             return *this;
         }
 
-        uint24 operator--(int)
+        uint24_t operator--(int)
         {
-            uint24 temp(*this);
+            uint24_t temp(*this);
             --(*this);
             return temp;
         }
 
-        uint24 operator+(const uint24 &rhs) const
+        uint24_t operator+(const uint24_t &rhs) const
         {
-            return uint24(*this) += rhs;
+            return uint24_t(*this) += rhs;
         }
 
-        uint24 &operator+=(const uint24 &rhs)
+        uint24_t &operator+=(const uint24_t &rhs)
         {
             std::uint32_t sum = static_cast<std::uint32_t>(*this) + static_cast<std::uint32_t>(rhs);
             *this = sum;
             return *this;
         }
 
-        uint24 operator-(const uint24 &rhs) const
+        uint24_t operator-(const uint24_t &rhs) const
         {
-            return uint24(*this) -= rhs;
+            return uint24_t(*this) -= rhs;
         }
 
-        uint24 &operator-=(const uint24 &rhs)
+        uint24_t &operator-=(const uint24_t &rhs)
         {
             std::uint32_t diff = static_cast<std::uint32_t>(*this) - static_cast<std::uint32_t>(rhs);
             *this = diff;
             return *this;
         }
 
-        uint24 operator^(const uint24 &rhs) const
+        uint24_t operator^(const uint24_t &rhs) const
         {
-            return uint24(*this) ^= rhs;
+            return uint24_t(*this) ^= rhs;
         }
 
-        uint24 &operator^=(const uint24 &rhs)
+        uint24_t &operator^=(const uint24_t &rhs)
         {
             bytes[0] ^= rhs.bytes[0];
             bytes[1] ^= rhs.bytes[1];
@@ -124,12 +124,12 @@ namespace BMLib
             return *this;
         }
 
-        uint24 operator&(const uint24 &rhs) const
+        uint24_t operator&(const uint24_t &rhs) const
         {
-            return uint24(*this) &= rhs;
+            return uint24_t(*this) &= rhs;
         }
 
-        uint24 &operator&=(const uint24 &rhs)
+        uint24_t &operator&=(const uint24_t &rhs)
         {
             bytes[0] &= rhs.bytes[0];
             bytes[1] &= rhs.bytes[1];
@@ -137,12 +137,12 @@ namespace BMLib
             return *this;
         }
 
-        uint24 operator|(const uint24 &rhs) const
+        uint24_t operator|(const uint24_t &rhs) const
         {
-            return uint24(*this) |= rhs;
+            return uint24_t(*this) |= rhs;
         }
 
-        uint24 &operator|=(const uint24 &rhs)
+        uint24_t &operator|=(const uint24_t &rhs)
         {
             bytes[0] |= rhs.bytes[0];
             bytes[1] |= rhs.bytes[1];
@@ -150,79 +150,79 @@ namespace BMLib
             return *this;
         }
 
-        uint24 operator<<(int rhs) const
+        uint24_t operator<<(std::int32_t rhs) const
         {
-            return uint24(*this) <<= rhs;
+            return uint24_t(*this) <<= rhs;
         }
 
-        uint24 &operator<<=(int rhs)
+        uint24_t &operator<<=(std::int32_t rhs)
         {
             std::uint32_t value = static_cast<std::uint32_t>(*this) << rhs;
             *this = value;
             return *this;
         }
 
-        uint24 operator>>(int rhs) const
+        uint24_t operator>>(std::int32_t rhs) const
         {
-            return uint24(*this) >>= rhs;
+            return uint24_t(*this) >>= rhs;
         }
 
-        uint24 &operator>>=(int rhs)
+        uint24_t &operator>>=(std::int32_t rhs)
         {
             std::uint32_t value = static_cast<std::uint32_t>(*this) >> rhs;
             *this = value;
             return *this;
         }
 
-        bool operator==(const uint24 &rhs) const
+        bool operator==(const uint24_t &rhs) const
         {
             return static_cast<std::uint32_t>(*this) == static_cast<std::uint32_t>(rhs);
         }
 
-        bool operator!=(const uint24 &rhs) const
+        bool operator!=(const uint24_t &rhs) const
         {
             return !(*this == rhs);
         }
 
-        bool operator<(const uint24 &rhs) const
+        bool operator<(const uint24_t &rhs) const
         {
             return static_cast<std::uint32_t>(*this) < static_cast<std::uint32_t>(rhs);
         }
 
-        bool operator>(const uint24 &rhs) const
+        bool operator>(const uint24_t &rhs) const
         {
             return rhs < *this;
         }
 
-        bool operator<=(const uint24 &rhs) const
+        bool operator<=(const uint24_t &rhs) const
         {
             return !(*this > rhs);
         }
 
-        bool operator>=(const uint24 &rhs) const
+        bool operator>=(const uint24_t &rhs) const
         {
             return !(*this < rhs);
         }
 
-        friend std::ostream &operator<<(std::ostream &os, const uint24 &value)
+        friend std::ostream &operator<<(std::ostream &os, const uint24_t &value)
         {
             os << static_cast<std::uint32_t>(value);
             return os;
         }
     };
 
-    struct int24
+    struct int24_t
     {
         std::int8_t bytes[3];
 
-        int24(std::int8_t b0, std::int8_t b1, std::int8_t b2)
+        int24_t(std::int8_t b0, std::int8_t b1, std::int8_t b2)
         {
             bytes[0] = b0;
             bytes[1] = b1;
             bytes[2] = b2;
         }
 
-        int24(std::int32_t value = 0)
+        int24_t(std::int32_t value = 0)
         {
             bytes[0] = static_cast<std::int8_t>(value >> 16);
             bytes[1] = static_cast<std::int8_t>(value >> 8);
@@ -238,7 +238,7 @@ namespace BMLib
             return value;
         }
 
-        int24 &operator=(std::int32_t rhs)
+        int24_t &operator=(std::int32_t rhs)
         {
             bytes[0] = static_cast<std::int8_t>(rhs >> 16);
             bytes[1] = static_cast<std::int8_t>(rhs >> 8);
@@ -246,62 +246,62 @@ namespace BMLib
             return *this;
         }
 
-        int24 &operator++()
+        int24_t &operator++()
         {
-            *this += int24(0, 0, 1);
+            *this += int24_t(0, 0, 1);
             return *this;
         }
 
-        int24 operator++(int)
+        int24_t operator++(int)
         {
-            int24 temp(*this);
+            int24_t temp(*this);
             ++(*this);
             return temp;
         }
 
-        int24 &operator--()
+        int24_t &operator--()
         {
-            *this -= int24(0, 0, 1);
+            *this -= int24_t(0, 0, 1);
             return *this;
         }
 
-        int24 operator--(int)
+        int24_t operator--(int)
         {
-            int24 temp(*this);
+            int24_t temp(*this);
             --(*this);
             return temp;
         }
 
-        int24 operator+(const int24 &rhs) const
+        int24_t operator+(const int24_t &rhs) const
         {
-            return int24(*this) += rhs;
+            return int24_t(*this) += rhs;
         }
 
-        int24 &operator+=(const int24 &rhs)
+        int24_t &operator+=(const int24_t &rhs)
         {
             std::int32_t sum = static_cast<std::int32_t>(*this) + static_cast<std::int32_t>(rhs);
             *this = sum;
             return *this;
         }
 
-        int24 operator-(const int24 &rhs) const
+        int24_t operator-(const int24_t &rhs) const
         {
-            return int24(*this) -= rhs;
+            return int24_t(*this) -= rhs;
         }
 
-        int24 &operator-=(const int24 &rhs)
+        int24_t &operator-=(const int24_t &rhs)
         {
             std::int32_t diff = static_cast<std::int32_t>(*this) - static_cast<std::int32_t>(rhs);
             *this = diff;
             return *this;
         }
 
-        int24 operator^(const int24 &rhs) const
+        int24_t operator^(const int24_t &rhs) const
         {
-            return int24(*this) ^= rhs;
+            return int24_t(*this) ^= rhs;
         }
 
-        int24 &operator^=(const int24 &rhs)
+        int24_t &operator^=(const int24_t &rhs)
         {
             bytes[0] ^= rhs.bytes[0];
             bytes[1] ^= rhs.bytes[1];
@@ -309,12 +309,12 @@ namespace BMLib
             return *this;
         }
 
-        int24 operator&(const int24 &rhs) const
+        int24_t operator&(const int24_t &rhs) const
         {
-            return int24(*this) &= rhs;
+            return int24_t(*this) &= rhs;
         }
 
-        int24 &operator&=(const int24 &rhs)
+        int24_t &operator&=(const int24_t &rhs)
         {
             bytes[0] &= rhs.bytes[0];
             bytes[1] &= rhs.bytes[1];
@@ -322,12 +322,12 @@ namespace BMLib
             return *this;
         }
 
-        int24 operator|(const int24 &rhs) const
+        int24_t operator|(const int24_t &rhs) const
         {
-            return int24(*this) |= rhs;
+            return int24_t(*this) |= rhs;
         }
 
-        int24 &operator|=(const int24 &rhs)
+        int24_t &operator|=(const int24_t &rhs)
         {
             bytes[0] |= rhs.bytes[0];
             bytes[1] |= rhs.bytes[1];
@@ -335,67 +335,64 @@ namespace BMLib
             return *this;
         }
 
-        int24 operator<<(int rhs) const
+        int24_t operator<<(std::int32_t rhs) const
         {
-            return int24(*this) <<= rhs;
+            return int24_t(*this) <<= rhs;
         }
 
-        int24 &operator<<=(int rhs)
+        int24_t &operator<<=(std::int32_t rhs)
         {
             std::int32_t value = static_cast<std::int32_t>(*this) << rhs;
             *this = value;
             return *this;
         }
 
-        int24 operator>>(int rhs) const
+        int24_t operator>>(std::int32_t rhs) const
         {
-            return int24(*this) >>= rhs;
+            return int24_t(*this) >>= rhs;
         }
 
-        int24 &operator>>=(int rhs)
+        int24_t &operator>>=(std::int32_t rhs)
         {
             std::int32_t value = static_cast<std::int32_t>(*this) >> rhs;
             *this = value;
             return *this;
         }
 
-        bool operator==(const int24 &rhs) const
+        bool operator==(const int24_t &rhs) const
         {
             return static_cast<std::int32_t>(*this) == static_cast<std::int32_t>(rhs);
         }
 
-        bool operator!=(const int24 &rhs) const
+        bool operator!=(const int24_t &rhs) const
         {
             return !(*this == rhs);
         }
 
-        bool operator<(const int24 &rhs) const
+        bool operator<(const int24_t &rhs) const
         {
             return static_cast<std::int32_t>(*this) < static_cast<std::int32_t>(rhs);
         }
 
-        bool operator>(const int24 &rhs) const
+        bool operator>(const int24_t &rhs) const
         {
             return rhs < *this;
         }
 
-        bool operator<=(const int24 &rhs) const
+        bool operator<=(const int24_t &rhs) const
         {
             return !(*this > rhs);
         }
 
-        bool operator>=(const int24 &rhs) const
+        bool operator>=(const int24_t &rhs) const
         {
             return !(*this < rhs);
         }
 
-        friend std::ostream &operator<<(std::ostream &os, const int24 &value)
+        friend std::ostream &operator<<(std::ostream &os, const int24_t &value)
         {
             os << static_cast<std::int32_t>(value);
             return os;
         }
     };
-
-    using uint24_t = uint24;
-    using int24_t = int24;
 }

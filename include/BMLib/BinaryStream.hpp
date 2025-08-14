@@ -1,4 +1,4 @@
-// CppBinaryStream - binary stream c++ library implemention.
+// CppBinaryStream
 //
 // Copyright (C) 2025  vp817
 //
@@ -22,49 +22,41 @@
 #include "exceptions/VarIntTooBig.hpp"
 #include "exceptions/ZigZagTooBig.hpp"
 #include "exceptions/PaddingOutOfRange.hpp"
-#include "Ints.hpp"
+#include "Integers.hpp"
 #include <cmath>
 #include <type_traits>
 #include <string>
 #include <optional>
 #include <functional>
 #include <algorithm>
-
-#ifdef _WIN32
 #include <cstring>
-#endif
 
 namespace BMLib
 {
 	class BinaryStream
 	{
-	protected:
-		Buffer *buffer;
-		std::size_t position;
-		std::uint8_t curr_write_octet;
-		std::size_t curr_bit_write_pos;
-		std::uint8_t curr_read_octet;
-		std::size_t curr_bit_read_pos;
-
 	public:
-		/// \brief Initializes a new instance of BinaryStream class.
+		/// \brief Initializes a new BinaryStream instance.
 		///
 		/// \param[in] buffer The buffer to use.
 		/// \param[in] position The reading position.
 		explicit BinaryStream(Buffer *buffer, std::size_t position);
 
 		/// \brief Destructor for the BinaryStream class.
-		/// This deinitializes the buffer and resets the stream to its default state.
+		/// This deallocates the buffer and resets the stream to its default state.
 		~BinaryStream();
 
-		/// \brief Rewinds the reading position
+		/// \brief Rewinds the reading position.
 		void rewind();
 
-		/// \brief Resets the buffer with a new allocated buffer.
+		/// \brief Destroys the buffer then allocates a new buffer.
 		///
 		/// \param[in] auto_realloc Enable automatic reallocation for the new buffer.
 		/// \param[in] alloc_size The allocation size for the new buffer.
-		void reset(bool auto_realloc = false, std::size_t alloc_size = BIN_STRM_DEF_ALLOC_SZ);
+		void reset(bool auto_realloc = false, std::size_t alloc_size = Buffer::DEFAULT_ALLOCATION_SIZE);
+
+		/// \brief Deallocates the buffer without allocating a new one.
+		void destroy();
 
 		/// \brief Deallocates the buffer and sets it to the new buffer specified.
 		///
@@ -89,20 +81,10 @@ namespace BMLib
 		/// and rewinds the position.
 		void resetBitWriter();
 
-		/// \brief Sets the current reading position.
-		///
-		/// \param[in] value The value to set the reading position to.
-		void setPosition(std::size_t value);
-
 		/// \brief Retrieves the current buffer.
 		///
 		/// \return A pointer to the Buffer.
 		Buffer *getBuffer();
-
-		/// \brief Retrieves the current reading position/number of bytes read.
-		///
-		/// \return The resulting value.
-		std::size_t getNumOfBytesRead() const;
 
 		/// \brief Reads aligned binary from the current position in the buffer.
 		///
@@ -122,7 +104,7 @@ namespace BMLib
 		///
 		/// \tparam T the type that will be written.
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Whether to use big endian byte order.
 		template <typename T>
 		std::enable_if_t<std::is_arithmetic_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> || (std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> write(T value, bool big_endian = true)
 		{
@@ -140,7 +122,7 @@ namespace BMLib
 		///
 		/// \tparam T the type that will be written.
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Whether to use big endian byte order.
 		template <typename T>
 		std::enable_if_t<std::is_floating_point_v<T>> writeFloat(T value, bool big_endian = true)
 		{
@@ -155,7 +137,7 @@ namespace BMLib
 		///
 		/// \tparam T the type that will be used to write the string length.
 		/// \param[in] value The value to write into the buffer.
-		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Whether to use big endian byte order.
 		template <typename T>
 		std::enable_if_t<std::is_arithmetic_v<T> && std::is_unsigned_v<T> && !std::is_array_v<T> && !std::is_floating_point_v<T> && !(std::is_same_v<T, uint24_t> || std::is_same_v<T, int24_t>)> writeString(std::string value, bool big_endian = true)
 		{
@@ -184,7 +166,7 @@ namespace BMLib
 			for (std::size_t i = 0; i < std::ceil((sizeof(T) << 3) / 7); ++i) {
 				std::uint8_t to_write = value & 0x7f;
 				value >>= 7;
-				if (value != 0)
+				if (value)
 					this->write<uint8_t>(to_write | 0x80);
 				else {
 					this->write<uint8_t>(to_write);
@@ -226,18 +208,18 @@ namespace BMLib
 		///
 		/// \param[in] value The value to write.
 		/// \param[in] size The number of bits to write.
-		/// \param[in] msb_o Writes from the MSB to LSB.
+		/// \param[in] msb_o Writes from the MSb to LSb.
 		template <typename T>
 		void writeBits(T value, T size, bool msb_o = true)
 		{
 			for (T i = 0; i < size; ++i)
-				this->writeBit(((value >> (msb_o ? (size - i - 1) : i)) & 0b1) == 0b1);
+				this->writeBit(((value >> (msb_o ? (size - i - 1) : i)) & 0b1) == 1);
 		}
 
 		/// \brief Reads a type based on what the template type is.
 		///
 		/// \tparam T the type that will be read.
-		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Whether to use big endian byte order.
 		///
 		/// \return The T value read from the buffer.
 		template <typename T>
@@ -256,7 +238,7 @@ namespace BMLib
 		/// \brief Reads a floating-point number based on what the template type is.
 		///
 		/// \tparam T the type that will be read.
-		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Whether to use big endian byte order.
 		///
 		/// \return The T value read from the buffer.
 		template <typename T>
@@ -274,7 +256,7 @@ namespace BMLib
 		/// \brief Reads a string value based on what the template type is.
 		///
 		/// \tparam T the type that will be used to read the string length.
-		/// \param[in] big_endian Specifies whether to use big endian byte order.
+		/// \param[in] big_endian Whether to use big endian byte order.
 		///
 		/// \return The string value read from the buffer.
 		template <typename T>
@@ -282,7 +264,7 @@ namespace BMLib
 		{
 			T str_size = this->read<T>(big_endian);
 			Buffer *tmp_buf = this->readAligned(str_size);
-			std::uint8_t *bytes = tmp_buf->getBinary();
+			std::uint8_t *bytes = tmp_buf->binary;
 			delete tmp_buf;
 			return std::string((char *)bytes, str_size);
 		}
@@ -297,7 +279,7 @@ namespace BMLib
 		{
 			T str_size = this->readVarInt<T>();
 			Buffer *tmp_buf = this->readAligned(str_size);
-			std::uint8_t *bytes = tmp_buf->getBinary();
+			std::uint8_t *bytes = tmp_buf->binary;
 			delete tmp_buf;
 			return std::string((char *)bytes, str_size);
 		}
@@ -335,7 +317,7 @@ namespace BMLib
 			} catch (...) {
 				throw exceptions::ZigZagTooBig("Attempted to decode ZigZag that is too big to be represented.");
 			}
-			auto value = static_cast<T>(varint);
+			T value = static_cast<T>(varint);
 			return (value >> 1) ^ -(value & 1);
 		}
 
@@ -350,7 +332,7 @@ namespace BMLib
 		/// \brief Reads a bit from the buffer.
 		///
 		/// \param[in] skip Whether to skip to a new octet without waiting until the bit is completely read.
-		/// \param[in] msb_o Reads from the MSB to LSB.
+		/// \param[in] msb_o Reads from the MSb to LSb.
 		///
 		/// \return The boolean value of the bit read from the buffer.
 		bool readBit(bool skip = false, bool msb_o = true);
@@ -363,7 +345,7 @@ namespace BMLib
 		/// \brief Reads bits from the buffer.
 		///
 		/// \param[in] size The number of bits to read.
-		/// \param[in] msb_o Reads from the MSB to LSB.
+		/// \param[in] msb_o Reads from the MSb to LSb.
 		///
 		/// \return The value read from the buffer as type T.
 		template <typename T>
@@ -379,5 +361,16 @@ namespace BMLib
 		///
 		/// \return A pointer to the Buffer object representing the remaining buffer.
 		Buffer *readRemaining();
+
+	protected:
+		Buffer *buffer;
+		std::size_t position;
+		std::uint8_t curr_write_octet;
+		std::size_t curr_bit_write_pos;
+		std::uint8_t curr_read_octet;
+		std::size_t curr_bit_read_pos;
+
+	private:
+		void internalBufferCheck();
 	};
 }

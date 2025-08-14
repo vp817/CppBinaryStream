@@ -21,8 +21,6 @@ using namespace BMLib;
 
 int main()
 {
-	printf("Big Endian:\n");
-
 	BinaryStream *stream = new BinaryStream(Buffer::allocate(true,0), 0);
 	printf("Bit Related Stuff:\n");
 	stream->writeBit(true);
@@ -39,14 +37,14 @@ int main()
 
 	// 0 0 1 1 0 1 1 1 0 -> MSB
 	// 0 1 1 1 0 1 1 0 0 -> LSB
-	stream->writeBit(false,false,false);
-	stream->writeBit(false,false,false);
-	stream->writeBit(true,false,false);
-	stream->writeBit(false,false,false);
-	stream->writeBit(true,false,false);
-	stream->writeBit(true,false,false);
-	stream->writeBit(true,false,false);
-	stream->writeBit(false,false,false);
+	stream->writeBit(false, false, false);
+	stream->writeBit(false, false, false);
+	stream->writeBit(true, false, false);
+	stream->writeBit(false, false, false);
+	stream->writeBit(true, false, false);
+	stream->writeBit(true, false, false);
+	stream->writeBit(true, false, false);
+	stream->writeBit(false, false, false);
 
 	printf("Bit value: %d\n", stream->readBit());
 	printf("Bit value: %d\n", stream->readBit());
@@ -61,14 +59,16 @@ int main()
 	printf("Bit 2 value: %d\n", stream->readBit());
 	stream->resetBitReader();
 
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
-	printf("Bit 3 value: %d\n", stream->readBit(false,false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+	printf("Bit 3 value: %d\n", stream->readBit(false, false));
+
+	printf("Big Endian:\n");
 
 	stream->write<std::uint8_t>(1);
 	stream->write<std::uint8_t>(3);
@@ -142,12 +142,12 @@ int main()
 	printf("StringVarInt: %s\n", stream->readStringVarInt().c_str());
 
 	Buffer *paddingBuffer = stream->readPadding(0, 1024);
-	printf("ZeroPaddingSize: %zu\n", paddingBuffer->getSize());
+	printf("ZeroPaddingSize: %zu\n", paddingBuffer->size);
 	printf("RemainingFirstIndex: %d\n", paddingBuffer->at(0));
 	printf("RemainingFourthIndex: %d\n", paddingBuffer->at(4));
 	printf("RemainingLastIndex: %d\n", paddingBuffer->at(1023));
 
-	printf("Old buffer size: %zu\n", stream->getBuffer()->getSize());
+	printf("Old buffer size: %zu\n", stream->getBuffer()->size);
 
 	delete paddingBuffer;
 
@@ -181,7 +181,7 @@ int main()
 	printf("Double: %f\n", stream->readFloat<double>(false));
 	printf("String: %s\n", stream->readString<std::uint32_t>(false).c_str());
 
-	printf("New buffer size: %zu\n", stream->getBuffer()->getSize());
+	printf("New buffer size: %zu\n", stream->getBuffer()->size);
 
 	stream->reset(true);
 

@@ -1,4 +1,4 @@
-// CppBinaryStream - binary stream c++ library implemention.
+// CppBinaryStream
 //
 // Copyright (C) 2025  vp817
 //
@@ -23,10 +23,6 @@ namespace BMLib::exceptions
 {
 	class EndOfStream : public std::exception
 	{
-	private:
-		/// \brief The error message associated with the exception.
-		std::string message;
-
 	public:
 		/// \brief Initializes a new EndOfStream error to be thrown.
 		///
@@ -50,5 +46,8 @@ namespace BMLib::exceptions
 		{
 			return message.c_str();
 		}
+
+	private:
+		std::string message;
 	};
 }
