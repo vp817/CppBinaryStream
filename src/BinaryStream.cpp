@@ -20,8 +20,6 @@
 BMLib::BinaryStream::BinaryStream(Buffer *buffer, std::size_t position)
 	: buffer(buffer), position(position), curr_read_octet(0), curr_bit_read_pos(0), curr_write_octet(0), curr_bit_write_pos(0)
 {
-	if (this->buffer == nullptr)
-		throw new std::invalid_argument("Cannot pass a nullptr as an argument.");
 }
 
 BMLib::BinaryStream::~BinaryStream()
@@ -81,9 +79,19 @@ void BMLib::BinaryStream::resetBitWriter()
 	this->curr_write_octet = this->curr_bit_write_pos = 0;
 }
 
+void BMLib::BinaryStream::setPosition(std::size_t value)
+{
+	this->position = value;
+}
+
 BMLib::Buffer *BMLib::BinaryStream::getBuffer()
 {
 	return this->buffer;
+}
+
+std::size_t BMLib::BinaryStream::getNumOfBytesRead() const
+{
+	return this->position;
 }
 
 BMLib::Buffer *BMLib::BinaryStream::readAligned(std::size_t size)

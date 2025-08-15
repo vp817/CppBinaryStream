@@ -81,10 +81,20 @@ namespace BMLib
 		/// and rewinds the position.
 		void resetBitWriter();
 
+		/// \brief Sets the current reading position.
+		///
+		/// \param[in] value The value to set the reading position to.
+		void setPosition(std::size_t value);
+
 		/// \brief Retrieves the current buffer.
 		///
 		/// \return A pointer to the Buffer.
 		Buffer *getBuffer();
+
+		/// \brief Retrieves the current reading position/number of bytes read.
+		///
+		/// \return The resulting value.
+		std::size_t getNumOfBytesRead() const;
 
 		/// \brief Reads aligned binary from the current position in the buffer.
 		///
